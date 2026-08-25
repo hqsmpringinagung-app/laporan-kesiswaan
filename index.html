@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIM Kesiswaan Profesional</title>
+    <title>SIM Kesiswaan Profesional - Supabase Realtime</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js for interactive analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -93,14 +95,12 @@
             <!-- Sidebar Footer -->
             <div class="p-4 bg-slate-200 border-t-2 border-slate-300">
                 <div class="text-[11px] font-black text-slate-900 truncate">Waka Kesiswaan Portal</div>
-                <div class="text-[10px] font-black text-emerald-800">Online & Tersinkronisasi</div>
+                <div class="text-[10px] font-black text-emerald-800 flex items-center"><span class="w-2 h-2 bg-emerald-600 rounded-full inline-block mr-1.5 animate-pulse"></span>Supabase Sync</div>
             </div>
         </aside>
 
-        <!-- MAIN CONTENT AREA -->
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-100 md:pl-64">
             
-            <!-- TOP NAVBAR -->
             <header class="h-20 bg-white border-b-2 border-slate-300 flex items-center justify-between px-6 z-30 no-print shadow-sm flex-shrink-0">
                 <div class="flex items-center space-x-4 min-w-0">
                     <button onclick="toggleSidebar()" class="md:hidden p-2 text-slate-900 bg-slate-200 border-2 border-slate-300 hover:bg-slate-300 rounded-xl flex-shrink-0"><i class="fa-solid fa-bars text-lg"></i></button>
@@ -112,7 +112,6 @@
                     <div class="relative hidden sm:block w-64 md:w-72">
                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-emerald-700"><i class="fa-solid fa-magnifying-glass"></i></span>
                         <input type="text" id="global-search-input" oninput="handleGlobalSearch(this.value)" placeholder="Cari nama atau NIS siswa..." class="w-full pl-10 pr-4 py-2 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white transition-all">
-                        <!-- Global Search Results Dropdown -->
                         <div id="global-search-results" class="hidden absolute left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border-2 border-slate-300 max-h-80 overflow-y-auto z-50"></div>
                     </div>
 
@@ -120,19 +119,16 @@
                         <div class="w-10 h-10 bg-emerald-700 text-white border-2 border-emerald-900 rounded-xl flex items-center justify-center font-black text-sm">WK</div>
                         <div class="hidden sm:block text-left">
                             <h4 class="text-xs font-black text-slate-950">Waka Kesiswaan</h4>
-                            <span class="text-[10px] text-emerald-800 font-black flex items-center"><span class="w-2 h-2 bg-emerald-600 rounded-full inline-block mr-1.5"></span>Aktif</span>
+                            <span class="text-[10px] text-emerald-800 font-black flex items-center"><span class="w-2 h-2 bg-emerald-600 rounded-full inline-block mr-1.5 animate-pulse"></span>Supabase Sync</span>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <!-- CONTENT SCROLLABLE CONTAINER -->
             <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-100 space-y-6 custom-scrollbar">
 
                 <div id="tab-dashboard" class="tab-content space-y-6">
-                    <!-- Stat Cards Grid (6 columns on xl desktop with solid vibrant colors and sharp borders) -->
                     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
-                        <!-- Total Siswa: Hijau Gelap Padat -->
                         <div class="bg-emerald-950 border-2 border-emerald-800 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-tight text-emerald-300 truncate">Total Siswa</span>
@@ -140,7 +136,6 @@
                             </div>
                             <h3 id="stat-total-siswa" class="text-lg sm:text-2xl font-black text-white">0</h3>
                         </div>
-                        <!-- Pelanggaran: Oranye / Amber Padat -->
                         <div class="bg-amber-900 border-2 border-amber-700 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-tight text-amber-200 truncate">Pelanggaran</span>
@@ -148,7 +143,6 @@
                             </div>
                             <h3 id="stat-total-pelanggaran" class="text-lg sm:text-2xl font-black text-white">0</h3>
                         </div>
-                        <!-- Prestasi: Hijau Terang Padat -->
                         <div class="bg-emerald-700 border-2 border-emerald-500 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-tight text-emerald-100 truncate">Prestasi</span>
@@ -156,7 +150,6 @@
                             </div>
                             <h3 id="stat-total-prestasi" class="text-lg sm:text-2xl font-black text-white">0</h3>
                         </div>
-                        <!-- Pembinaan: Merah Padat -->
                         <div class="bg-red-900 border-2 border-red-700 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-tight text-red-200 truncate">Pembinaan</span>
@@ -164,7 +157,6 @@
                             </div>
                             <h3 id="stat-total-binaan" class="text-lg sm:text-2xl font-black text-white">0</h3>
                         </div>
-                        <!-- Kegiatan: Ungu Padat -->
                         <div class="bg-purple-900 border-2 border-purple-700 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-tight text-purple-200 truncate">Kegiatan</span>
@@ -172,7 +164,6 @@
                             </div>
                             <h3 id="stat-total-kegiatan" class="text-lg sm:text-2xl font-black text-white">0</h3>
                         </div>
-                        <!-- Perizinan: Teal Padat -->
                         <div class="bg-teal-900 border-2 border-teal-700 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-tight text-teal-200 truncate">Perizinan</span>
@@ -182,19 +173,17 @@
                         </div>
                     </div>
 
-                    <!-- Charts Row -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="bg-white border-2 border-slate-300 p-5 sm:p-6 rounded-2xl shadow-md lg:col-span-2">
                             <h3 class="text-sm font-black text-slate-950 mb-4 flex items-center"><i class="fa-solid fa-chart-column mr-2 text-emerald-700"></i>Statistik Rekapitulasi Kesiswaan</h3>
                             <div class="h-64 sm:h-72"><canvas id="dashboardChart"></canvas></div>
                         </div>
                         <div class="bg-white border-2 border-slate-300 p-5 sm:p-6 rounded-2xl shadow-md">
-                            <h3 class="text-sm font-black text-slate-950 mb-4 flex items-center"><i class="fa-solid fa-chart-pie mr-2 text-emerald-700"></i>Distribusi Siswa per Kelas</h3>
+                            <h3 class="text-sm font-black text-slate-950 mb-4 flex items-center"><i class="fa-solid fa-chart-column mr-2 text-emerald-700"></i>Distribusi Siswa per Kelas (Tertinggi ke Rendah)</h3>
                             <div class="h-64 sm:h-72"><canvas id="classChart"></canvas></div>
                         </div>
                     </div>
 
-                    <!-- Dashboard Bottom Widgets -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="bg-white border-2 border-slate-300 p-5 sm:p-6 rounded-2xl shadow-md space-y-4">
                             <h3 class="text-sm font-black text-amber-800 flex items-center"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Perlu Perhatian (Poin Tinggi)</h3>
@@ -556,108 +545,47 @@
                     <div class="bg-white border-2 border-slate-300 p-5 sm:p-6 rounded-2xl shadow-md space-y-6">
                         <h3 class="text-sm font-black text-slate-950 flex items-center"><i class="fa-solid fa-circle-info mr-2 text-emerald-700"></i>Informasi & Pengaturan Sistem Kesiswaan</h3>
                         <p class="text-xs font-black text-slate-700 leading-relaxed">
-                            SIM Kesiswaan versi profesional ini dirancang khusus untuk Waka Kesiswaan dalam mengelola catatan tata tertib, prestasi, pembinaan, kegiatan, serta perizinan santri/siswa dengan tampilan modern bernuansa sekolah elegan.
+                            SIM Kesiswaan versi profesional ini terintegrasi langsung dengan database Supabase Cloud untuk mendukung sinkronisasi realtime otomatis antar perangkat sekolah tanpa perlu refresh.
                         </p>
 
                         <!-- Supabase SQL Integration Section -->
                         <div class="pt-4 border-t-2 border-slate-300 space-y-3">
                             <h4 class="text-xs font-black text-emerald-800 uppercase tracking-widest"><i class="fa-solid fa-database mr-1.5"></i>Integrasi Supabase (Multi-Perangkat & Cloud Database)</h4>
-                            <p class="text-xs font-black text-slate-600">Salin (copy) skrip SQL di bawah ini dan jalankan di SQL Editor Supabase Anda untuk membuat tabel yang diperlukan agar aplikasi dapat tersinkronisasi di berbagai perangkat.</p>
+                            <p class="text-xs font-black text-slate-600">Salin skrip SQL lengkap di bawah ini dan jalankan di SQL Editor Supabase Anda.</p>
                             
                             <div class="relative">
                                 <button onclick="copySupabaseSQL()" class="absolute top-2 right-2 px-3 py-1 bg-emerald-700 hover:bg-emerald-600 text-white font-black rounded-lg text-[10px] shadow"><i class="fa-solid fa-copy mr-1"></i>Copy SQL</button>
                                 <pre id="supabase-sql-code" class="p-4 bg-slate-950 text-emerald-400 font-mono text-[11px] rounded-xl overflow-x-auto border-2 border-slate-800">
--- TABEL SISWA
-CREATE TABLE IF NOT EXISTS siswa (
-    id BIGINT PRIMARY KEY,
-    nis TEXT NOT NULL,
-    nama TEXT NOT NULL,
-    kelas TEXT NOT NULL,
-    jk TEXT NOT NULL,
-    ttl TEXT,
-    ortu TEXT,
-    hp TEXT,
-    alamat TEXT,
-    foto TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+-- ========================================================
+-- SKRIP SQL LENGKAP SUPABASE - SIM KESISWAAN PROFESIONAL
+-- ========================================================
+
+CREATE TABLE IF NOT EXISTS sim_state (
+    id TEXT PRIMARY KEY,
+    data JSONB NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- TABEL PELANGGARAN
-CREATE TABLE IF NOT EXISTS pelanggaran (
-    id BIGINT PRIMARY KEY,
-    siswa_id BIGINT REFERENCES siswa(id) ON DELETE CASCADE,
-    tanggal TEXT NOT NULL,
-    nama TEXT NOT NULL,
-    kategori TEXT NOT NULL,
-    poin INT NOT NULL,
-    kronologi TEXT,
-    pelapor TEXT,
-    tindakan TEXT,
-    hasil_tindakan TEXT,
-    status TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+ALTER TABLE sim_state ENABLE ROW LEVEL SECURITY;
 
--- TABEL PRESTASI
-CREATE TABLE IF NOT EXISTS prestasi (
-    id BIGINT PRIMARY KEY,
-    siswa_id BIGINT REFERENCES siswa(id) ON DELETE CASCADE,
-    tanggal TEXT NOT NULL,
-    bidang TEXT NOT NULL,
-    nama TEXT NOT NULL,
-    tingkat TEXT NOT NULL,
-    juara TEXT NOT NULL,
-    penyelenggara TEXT,
-    dokumentasi TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+DROP POLICY IF EXISTS "Akses publik penuh untuk sim_state" ON sim_state;
 
--- TABEL PEMBINAAN
-CREATE TABLE IF NOT EXISTS pembinaan (
-    id BIGINT PRIMARY KEY,
-    siswa_id BIGINT REFERENCES siswa(id) ON DELETE CASCADE,
-    tanggal TEXT NOT NULL,
-    permasalahan TEXT NOT NULL,
-    bentuk TEXT NOT NULL,
-    hasil TEXT NOT NULL,
-    tindaklanjut TEXT,
-    status TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+CREATE POLICY "Akses publik penuh untuk sim_state" 
+ON sim_state 
+FOR ALL 
+USING (true) 
+WITH CHECK (true);
 
--- TABEL KEGIATAN
-CREATE TABLE IF NOT EXISTS kegiatan (
-    id BIGINT PRIMARY KEY,
-    nama TEXT NOT NULL,
-    jenis TEXT NOT NULL,
-    tanggal TEXT NOT NULL,
-    tempat TEXT NOT NULL,
-    pj TEXT NOT NULL,
-    peserta TEXT,
-    status TEXT,
-    catatan TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- TABEL PERIZINAN
-CREATE TABLE IF NOT EXISTS perizinan (
-    id BIGINT PRIMARY KEY,
-    siswa_id BIGINT REFERENCES siswa(id) ON DELETE CASCADE,
-    tanggal TEXT NOT NULL,
-    jam_keluar TEXT NOT NULL,
-    jam_kembali TEXT NOT NULL,
-    keperluan TEXT NOT NULL,
-    penjemput TEXT NOT NULL,
-    status TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+INSERT INTO sim_state (id, data, updated_at) 
+VALUES ('main_data', '{}'::jsonb, NOW()) 
+ON CONFLICT (id) DO NOTHING;
                                 </pre>
                             </div>
                         </div>
                         
                         <div class="pt-4 border-t-2 border-slate-300 space-y-2">
                             <h4 class="text-xs font-black text-red-700 uppercase tracking-widest"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>Zona Reset Data (Kosongkan Seluruh Data Aplikasi)</h4>
-                            <p class="text-xs font-black text-slate-600">Tombol ini akan menghapus seluruh data catatan (siswa, pelanggaran, prestasi, pembinaan, kegiatan, perizinan, kelas, guru) dan mengembalikannya ke kondisi kosong / nol.</p>
+                            <p class="text-xs font-black text-slate-600">Tombol ini akan menghapus seluruh data catatan di Supabase & LocalStorage dan mengembalikannya ke kondisi kosong (mulai dari nol).</p>
                             <button onclick="resetAllData()" class="w-full py-3 bg-red-100 hover:bg-red-700 text-red-700 hover:text-white font-black rounded-xl text-xs transition-all border-2 border-red-300 flex items-center justify-center space-x-2 shadow-sm">
                                 <i class="fa-solid fa-rotate-right"></i><span>Reset / Kosongkan Seluruh Data Aplikasi (Mulai dari Nol)</span>
                             </button>
@@ -720,7 +648,7 @@ CREATE TABLE IF NOT EXISTS perizinan (
                         <input type="text" id="siswa-hp" class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900">
                     </div>
                     <div>
-                        <label class="block text-xs font-black text-slate-900 mb-1">Upload Foto Siswa (JPG / PNG)</label>
+                        <label class="block text-xs font-black text-slate-900 mb-1">Upload Foto Siswa (JPG/PNG)</label>
                         <input type="file" id="siswa-foto-file" accept="image/jpeg, image/png" onchange="handleFotoUpload(event)" class="w-full px-3 py-2 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900 file:mr-4 file:py-1 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-black file:bg-emerald-600 file:text-white hover:file:bg-emerald-700">
                         <input type="hidden" id="siswa-foto">
                     </div>
@@ -1067,75 +995,147 @@ CREATE TABLE IF NOT EXISTS perizinan (
     </div>
 
     <script>
+        const SUPABASE_URL = 'https://ogbvyeypznbwurmsmwld.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9nYnZ5ZXlwem5id3VybXNtd2xkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3OTM1MzgsImV4cCI6MjA5NzM2OTUzOH0.LSO8qrGBs85lkSD5mzVL7zOBO5LTHJX90v7Q-FJEYQo';
+        
+        let supabaseClient = null;
+        let isCanvasEnvironment = false;
+
+        try {
+            if (window.location.protocol === 'blob:' || window.location.hostname.includes('usercontent.google') || window.self !== window.top) {
+                isCanvasEnvironment = true;
+            }
+        } catch (e) {
+            isCanvasEnvironment = true;
+        }
+
+        try {
+            if (window.supabase) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                    realtime: { enabled: !isCanvasEnvironment }
+                });
+            }
+        } catch (e) {
+            console.warn('Supabase init warning:', e);
+        }
+
         let appData = {
             currentUser: { username: 'waka', role: 'Waka Kesiswaan' },
-            kelas: ["VII A", "VII B", "VIII A", "VIII B", "IX A", "IX B"],
-            guru: ["Guru Piket", "Ustadz Ahmad, S.Pd.", "Ustadzah Fatimah, M.Pd.", "Musyrif Asrama", "Wali Kelas VII A"],
+            kelas: ["IX A", "IX B", "VIII A", "VIII B", "VII A", "VII B"],
+            guru: ["Guru Piket", "Ustadz Ahmad, S.Pd.", "Ustadzah Fatimah, M.Pd.", "Musyrif Asrama", "Wali Kelas IX A"],
             tataTertibDoc: `<h4 style="font-weight: 900; color: #047857; margin-bottom: 8px;">PEDOMAN TATA TERTIB DAN POIN PELANGGARAN SISWA</h4>
                             <p style="margin-bottom: 6px;">1. <strong>Pelanggaran Ringan (5-10 Poin):</strong> Terlambat hadir di sekolah / apel pagi, atribut seragam tidak lengkap, atau piket kelas terabaikan.</p>
                             <p style="margin-bottom: 6px;">2. <strong>Pelanggaran Sedang (15-30 Poin):</strong> Tidak mengikuti kegiatan berjamaah wajib, membolos jam pelajaran, membawa gadget tanpa izin resmi.</p>
                             <p style="margin-bottom: 6px;">3. <strong>Pelanggaran Berat (50-100 Poin):</strong> Merokok / membawa barang terlarang, terlibat perkelahian / bullying, atau tindak amoral berat.</p>`,
-            masterPelanggaran: [
-                { id: 1, nama: "Terlambat Hadir di Sekolah", poin: 5, kategori: "Ringan" },
-                { id: 2, nama: "Atribut Seragam Tidak Lengkap", poin: 10, kategori: "Ringan" },
-                { id: 3, nama: "Tidak Mengikuti Kegiatan Berjamaah", poin: 15, kategori: "Sedang" },
-                { id: 4, nama: "Membolos Jam Pelajaran", poin: 20, kategori: "Sedang" },
-                { id: 5, nama: "Membawa Gadget Tanpa Izin", poin: 30, kategori: "Sedang" },
-                { id: 6, nama: "Merokok / Barang Terlarang", poin: 50, kategori: "Berat" },
-                { id: 7, nama: "Terlibat Perkelahian / Bullying", poin: 100, kategori: "Berat" }
-            ],
             siswa: [
-                { id: 1, nis: "232407001", nama: "Ahmad Fauzan Al-Ghifari", kelas: "VII A", jk: "L", ttl: "Malang, 12 Januari 2013", ortu: "H. Abdullah", hp: "081234567890", alamat: "Jl. Pesantren No. 1, Ringinagung", foto: "https://placehold.co/150x150/10b981/ffffff?text=AF" },
-                { id: 2, nis: "232407002", nama: "Fatimah Azzahra", kelas: "VII A", jk: "P", ttl: "Kediri, 5 Maret 2013", ortu: "M. Ikhsan", hp: "081345678901", alamat: "Jl. Melati No. 14, Kediri", foto: "https://placehold.co/150x150/10b981/ffffff?text=FA" },
-                { id: 3, nis: "232407003", nama: "Muhammad Zidan Al-Farizi", kelas: "VII B", jk: "L", ttl: "Blitar, 18 Juli 2013", ortu: "Slamet Riyadi", hp: "081456789012", alamat: "Ds. Sumber Gedang, Blitar", foto: "https://placehold.co/150x150/10b981/ffffff?text=MZ" },
-                { id: 4, nis: "232407004", nama: "Aisyah Humairah", kelas: "VII B", jk: "P", ttl: "Tulungagung, 22 September 2013", ortu: "Umar Faruq", hp: "081567890123", alamat: "Jl. Diponegoro No. 8, Tulungagung", foto: "https://placehold.co/150x150/10b981/ffffff?text=AH" },
-                { id: 5, nis: "232408001", nama: "Rizky Ramadhan Putra", kelas: "VIII A", jk: "L", ttl: "Surabaya, 10 Ramadan 2012", ortu: "Herman Susanto", hp: "081678901234", alamat: "Jl. Kenangan No. 5, Surabaya", foto: "https://placehold.co/150x150/10b981/ffffff?text=RR" },
-                { id: 6, nis: "232408002", nama: "Naila Salsabila", kelas: "VIII A", jk: "P", ttl: "Malang, 3 November 2012", ortu: "Dedi Mulyadi", hp: "081789012345", alamat: "Perum Griya Asri Blok C-2", foto: "https://placehold.co/150x150/10b981/ffffff?text=NS" },
-                { id: 7, nis: "232408003", nama: "Ibrahim Malik Al-Khattab", kelas: "VIII B", jk: "L", ttl: "Kediri, 14 Februari 2012", ortu: "Zainal Abidin", hp: "081890123456", alamat: "Jl. Ahmad Yani No. 50", foto: "https://placehold.co/150x150/10b981/ffffff?text=IM" },
-                { id: 8, nis: "232408004", nama: "Khadijah binti Khuwailid", kelas: "VIII B", jk: "P", ttl: "Jombang, 30 Mei 2012", ortu: "Ahmad Dahlan", hp: "081901234567", alamat: "Ds. Tembelang, Jombang", foto: "https://placehold.co/150x150/10b981/ffffff?text=KB" },
-                { id: 9, nis: "232409001", nama: "Utsman bin Affan", kelas: "IX A", jk: "L", ttl: "Kediri, 17 Agustus 2011", ortu: "Mustofa", hp: "082112233445", alamat: "Jl. Hayam Wuruk No. 12", foto: "https://placehold.co/150x150/10b981/ffffff?text=UB" },
-                { id: 10, nis: "232409002", nama: "Zainab binti Muhammad", kelas: "IX A", jk: "P", ttl: "Madiun, 12 Desember 2011", ortu: "Kasim", hp: "082223344556", alamat: "Jl. Pahlawan No. 90, Madiun", foto: "https://placehold.co/150x150/10b981/ffffff?text=ZB" },
-                { id: 11, nis: "232409003", nama: "Bilal bin Rabah", kelas: "IX B", jk: "L", ttl: "Kediri, 25 Januari 2011", ortu: "Rabah", hp: "082334455667", alamat: "Ds. Ringinagung No. 4", foto: "https://placehold.co/150x150/10b981/ffffff?text=BB" },
-                { id: 12, nis: "232409004", nama: "Maryam binti Imran", kelas: "IX B", jk: "P", ttl: "Kediri, 9 Oktober 2011", ortu: "Imran", hp: "082445566778", alamat: "Jl. Pesantren As-Syafi'iyah", foto: "https://placehold.co/150x150/10b981/ffffff?text=MB" }
+                { id: 1, nis: "232409001", nama: "Utsman bin Affan", kelas: "IX A", jk: "L", ttl: "Kediri, 17 Agustus 2011", ortu: "Mustofa", hp: "082112233445", alamat: "Jl. Hayam Wuruk No. 12", foto: "https://placehold.co/150x150/10b981/ffffff?text=UB" },
+                { id: 2, nis: "232409002", nama: "Zainab binti Muhammad", kelas: "IX A", jk: "P", ttl: "Madiun, 12 Desember 2011", ortu: "Kasim", hp: "082223344556", alamat: "Jl. Pahlawan No. 90, Madiun", foto: "https://placehold.co/150x150/10b981/ffffff?text=ZB" },
+                { id: 3, nis: "232408001", nama: "Rizky Ramadhan Putra", kelas: "VIII A", jk: "L", ttl: "Surabaya, 10 Ramadan 2012", ortu: "Herman Susanto", hp: "081678901234", alamat: "Jl. Kenangan No. 5, Surabaya", foto: "https://placehold.co/150x150/10b981/ffffff?text=RR" },
+                { id: 4, nis: "232407001", nama: "Ahmad Fauzan Al-Ghifari", kelas: "VII A", jk: "L", ttl: "Malang, 12 Januari 2013", ortu: "H. Abdullah", hp: "081234567890", alamat: "Jl. Pesantren No. 1, Ringinagung", foto: "https://placehold.co/150x150/10b981/ffffff?text=AF" }
             ],
             pelanggaran: [
-                { id: 1, siswaId: 3, tanggal: "2026-02-10", nama: "Terlambat Hadir di Sekolah", kategori: "Ringan", poin: 5, kronologi: "Terlambat datang apel pagi", pelapor: "Guru Piket", tindakan: "Teguran lisan & nasehat", hasilTindakan: "Sudah membuat surat pernyataan", status: "Selesai" },
-                { id: 2, siswaId: 7, tanggal: "2026-02-14", nama: "Membolos Jam Pelajaran", kategori: "Sedang", poin: 20, kronologi: "Keluar asrama saat jam wajib belajar malam", pelapor: "Musyrif Asrama", tindakan: "Pembinaan khusus", hasilTindakan: "Peringatan pertama", status: "Proses" }
+                { id: 1, siswaId: 3, tanggal: "2026-02-10", nama: "Terlambat Hadir di Sekolah", kategori: "Ringan", poin: 5, kronologi: "Terlambat datang apel pagi", pelapor: "Guru Piket", tindakan: "Teguran lisan & nasehat", hasilTindakan: "Sudah membuat surat pernyataan", status: "Selesai" }
             ],
             prestasi: [
-                { id: 1, siswaId: 1, tanggal: "2026-01-20", bidang: "Keagamaan", nama: "Juara 1 Musabaqah Hifdzil Qur'an", tingkat: "Kabupaten/Kota", juara: "Juara 1", penyelenggara: "Kemenag", dokumentasi: "https://placehold.co/300x200/10b981/ffffff?text=MHQ" },
-                { id: 2, siswaId: 10, tanggal: "2026-02-05", bidang: "Akademik", nama: "Olimpiade Matematika", tingkat: "Provinsi", juara: "Juara 2", penyelenggara: "Universitas", dokumentasi: "https://placehold.co/300x200/10b981/ffffff?text=Matematika" }
+                { id: 1, siswaId: 1, tanggal: "2026-01-20", bidang: "Keagamaan", nama: "Juara 1 Musabaqah Hifdzil Qur'an", tingkat: "Kabupaten/Kota", juara: "Juara 1", penyelenggara: "Kemenag", dokumentasi: "https://placehold.co/300x200/10b981/ffffff?text=MHQ" }
             ],
-            pembinaan: [
-                { id: 1, siswaId: 7, tanggal: "2026-02-15", permasalahan: "Sering keluar malam", bentuk: "Konseling Individu", hasil: "Wali santri kooperatif", tindaklanjut: "Pemantauan harian", status: "Proses" }
-            ],
+            pembinaan: [],
             kegiatan: [
-                { id: 1, nama: "Pondok Ramadhan & Pesantren Kilat", jenis: "Kegiatan Keagamaan", tanggal: "2026-03-01", tempat: "Masjid Pesantren", pj: "Ustadz Pembina", peserta: "Seluruh Siswa", status: "Terencana", catatan: "Fokus tadarus" },
-                { id: 2, nama: "Lomba Pidato 3 Bahasa & Tahfidz", jenis: "Lomba", tanggal: "2026-04-12", tempat: "Aula Sekolah", pj: "Bagian Bahasa", peserta: "Perwakilan Kelas", status: "Terencana", catatan: "Bahasa Arab & Inggris" }
+                { id: 1, nama: "Pondok Ramadhan & Pesantren Kilat", jenis: "Kegiatan Keagamaan", tanggal: "2026-03-01", tempat: "Masjid Pesantren", pj: "Ustadz Pembina", peserta: "Seluruh Siswa", status: "Terencana", catatan: "Fokus tadarus" }
             ],
-            perizinan: [
-                { id: 1, siswaId: 2, tanggal: "2026-02-21", jamKeluar: "08:00", jamKembali: "11:30", keperluan: "Izin berobat ke dokter", penjemput: "Ibu Kandung", status: "Kembali" }
-            ]
+            perizinan: []
         };
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadFromLocalStorage();
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadFromSupabase();
+            validateAppData();
             initApp();
+            if (!isCanvasEnvironment) {
+                initSupabaseRealtime();
+            }
         });
 
-        function saveToLocalStorage() {
-            localStorage.setItem('sim_kesiswaan_data', JSON.stringify(appData));
+        function validateAppData() {
+            if (!Array.isArray(appData.kelas)) appData.kelas = ["IX A", "IX B", "VIII A", "VIII B", "VII A", "VII B"];
+            if (!Array.isArray(appData.siswa)) appData.siswa = [];
+            if (!Array.isArray(appData.pelanggaran)) appData.pelanggaran = [];
+            if (!Array.isArray(appData.prestasi)) appData.prestasi = [];
+            if (!Array.isArray(appData.pembinaan)) appData.pembinaan = [];
+            if (!Array.isArray(appData.kegiatan)) appData.kegiatan = [];
+            if (!Array.isArray(appData.perizinan)) appData.perizinan = [];
+            if (!Array.isArray(appData.guru)) appData.guru = [];
         }
 
-        function loadFromLocalStorage() {
-            const saved = localStorage.getItem('sim_kesiswaan_data');
-            if (saved) {
-                appData = JSON.parse(saved);
+        async function saveToSupabase() {
+            try {
+                localStorage.setItem('sim_kesiswaan_data', JSON.stringify(appData));
+                if (supabaseClient) {
+                    const { error } = await supabaseClient
+                        .from('sim_state')
+                        .upsert({ id: 'main_data', data: appData, updated_at: new Date() });
+                    if (error) console.error('Supabase save error:', error.message);
+                }
+            } catch (err) {
+                console.warn('Sync storage warning:', err);
             }
         }
 
-        function resetAllData() {
-            if (confirm('PERINGATAN: Apakah Anda yakin ingin menghapus SELURUH data aplikasi (siswa, pelanggaran, prestasi, pembinaan, kegiatan, perizinan, kelas, guru) dan mengembalikannya ke kondisi kosong (mulai dari nol)? Tindakan ini tidak dapat dibatalkan.')) {
+        async function loadFromSupabase() {
+            try {
+                if (supabaseClient) {
+                    const { data, error } = await supabaseClient
+                        .from('sim_state')
+                        .select('data')
+                        .eq('id', 'main_data')
+                        .single();
+                    if (data && data.data) {
+                        appData = data.data;
+                        validateAppData();
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn('Supabase fetch notice, falling back to local storage.');
+            }
+            
+            const saved = localStorage.getItem('sim_kesiswaan_data');
+            if (saved) {
+                try { 
+                    appData = JSON.parse(saved); 
+                    validateAppData();
+                } catch(e){}
+            }
+        }
+
+        function initSupabaseRealtime() {
+            if (!supabaseClient || isCanvasEnvironment) return;
+            try {
+                supabaseClient
+                    .channel('public:sim_state')
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'sim_state' }, payload => {
+                        if (payload.new && payload.new.data) {
+                            appData = payload.new.data;
+                            validateAppData();
+                            populateDropdowns();
+                            renderDashboard();
+                            renderSiswaTable();
+                            renderPelanggaranTable();
+                            renderPrestasiTable();
+                            renderPembinaanTable();
+                            renderKegiatanTable();
+                            renderPerizinanTable();
+                            renderPengaturan();
+                            showNotification('Data baru tersinkronisasi otomatis secara realtime!', 'info');
+                        }
+                    })
+                    .subscribe();
+            } catch (e) {
+                console.warn('Realtime subscription notice:', e);
+            }
+        }
+
+        async function resetAllData() {
+            if (confirm('PERINGATAN: Apakah Anda yakin ingin menghapus SELURUH data aplikasi di Supabase & LocalStorage, lalu mengembalikannya ke kondisi kosong (mulai dari nol)? Tindakan ini tidak dapat dibatalkan.')) {
                 appData.siswa = [];
                 appData.pelanggaran = [];
                 appData.prestasi = [];
@@ -1145,7 +1145,8 @@ CREATE TABLE IF NOT EXISTS perizinan (
                 appData.kelas = [];
                 appData.guru = [];
                 appData.tataTertibDoc = '<h4 style="font-weight: 900; color: #047857; margin-bottom: 8px;">PEDOMAN TATA TERTIB</h4><p>Belum ada pedoman tata tertib.</p>';
-                saveToLocalStorage();
+                await saveToSupabase();
+                localStorage.removeItem('sim_kesiswaan_data');
                 location.reload();
             }
         }
@@ -1165,6 +1166,7 @@ CREATE TABLE IF NOT EXISTS perizinan (
         let classChartInstance = null;
 
         function initApp() {
+            validateAppData();
             populateDropdowns();
             renderDashboard();
             renderSiswaTable();
@@ -1208,7 +1210,6 @@ CREATE TABLE IF NOT EXISTS perizinan (
                 'profil-siswa': 'Profil Kesiswaan & Riwayat Lengkap'
             };
             document.getElementById('page-title').innerText = titles[tabId] || 'SIM Kesiswaan';
-
             document.getElementById('sidebar').classList.add('-translate-x-full');
         }
 
@@ -1245,15 +1246,17 @@ CREATE TABLE IF NOT EXISTS perizinan (
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById('siswa-foto').value = e.target.result;
-                    showNotification('Foto siswa (JPG/PNG) berhasil dimuat.', 'success');
+                    showNotification('Foto siswa (JPG) berhasil dimuat.', 'success');
                 };
                 reader.readAsDataURL(file);
             }
         }
 
         function populateDropdowns() {
-            const kelasOpts = `<option value="">Pilih Kelas</option>` + appData.kelas.map(k => `<option value="${k}">${k}</option>`).join('');
-            const filterKelasOpts = `<option value="">Semua Kelas</option>` + appData.kelas.map(k => `<option value="${k}">${k}</option>`).join('');
+            validateAppData();
+            const sortedKelas = [...appData.kelas].sort((a,b) => b.localeCompare(a));
+            const kelasOpts = `<option value="">Pilih Kelas</option>` + sortedKelas.map(k => `<option value="${k}">${k}</option>`).join('');
+            const filterKelasOpts = `<option value="">Semua Kelas</option>` + sortedKelas.map(k => `<option value="${k}">${k}</option>`).join('');
             
             if(document.getElementById('siswa-kelas')) document.getElementById('siswa-kelas').innerHTML = kelasOpts;
             if(document.getElementById('siswa-filter-kelas')) document.getElementById('siswa-filter-kelas').innerHTML = filterKelasOpts;
@@ -1342,10 +1345,10 @@ CREATE TABLE IF NOT EXISTS perizinan (
             renderCharts();
         }
 
-        function saveTataTertibDoc() {
+        async function saveTataTertibDoc() {
             const content = document.getElementById('tata-tertib-editor').innerHTML;
             appData.tataTertibDoc = content;
-            saveToLocalStorage();
+            await saveToSupabase();
             showNotification('Dokumen Tata Tertib berhasil disimpan!', 'success');
         }
 
@@ -1371,19 +1374,24 @@ CREATE TABLE IF NOT EXISTS perizinan (
 
             const ctx2El = document.getElementById('classChart');
             if (ctx2El) {
-                const classCounts = appData.kelas.map(k => appData.siswa.filter(s => s.kelas === k).length);
+                validateAppData();
+                const sortedKelas = [...appData.kelas].sort((a, b) => b.localeCompare(a));
+                const classCounts = sortedKelas.map(k => appData.siswa.filter(s => s.kelas === k).length);
+                
                 const ctx2 = ctx2El.getContext('2d');
                 if (classChartInstance) classChartInstance.destroy();
                 classChartInstance = new Chart(ctx2, {
-                    type: 'doughnut',
+                    type: 'bar',
                     data: {
-                        labels: appData.kelas,
+                        labels: sortedKelas,
                         datasets: [{
+                            label: 'Jumlah Siswa',
                             data: classCounts,
-                            backgroundColor: ['#047857', '#1d4ed8', '#b45309', '#b91c1c', '#6d28d9', '#0f766e']
+                            backgroundColor: '#1d4ed8',
+                            borderRadius: 6
                         }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false }
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
                 });
             }
         }
@@ -1446,7 +1454,7 @@ CREATE TABLE IF NOT EXISTS perizinan (
             openModal('modal-siswa');
         }
 
-        function saveSiswa(e) {
+        async function saveSiswa(e) {
             e.preventDefault();
             const id = document.getElementById('siswa-id').value;
             const data = {
@@ -1471,7 +1479,7 @@ CREATE TABLE IF NOT EXISTS perizinan (
                 showNotification('Siswa baru berhasil ditambahkan!', 'success');
             }
 
-            saveToLocalStorage();
+            await saveToSupabase();
             closeModal('modal-siswa');
             renderSiswaTable();
             renderDashboard();
@@ -1480,10 +1488,10 @@ CREATE TABLE IF NOT EXISTS perizinan (
 
         function editSiswa(id) { openSiswaModal(id); }
 
-        function deleteSiswa(id) {
+        async function deleteSiswa(id) {
             if (confirm('Apakah Anda yakin ingin menghapus data siswa ini?')) {
                 appData.siswa = appData.siswa.filter(s => s.id !== parseInt(id));
-                saveToLocalStorage();
+                await saveToSupabase();
                 renderSiswaTable();
                 renderDashboard();
                 populateDropdowns();
@@ -1562,7 +1570,7 @@ CREATE TABLE IF NOT EXISTS perizinan (
 
         function editPelanggaran(id) { openPelanggaranModal(id); }
 
-        function savePelanggaran(e) {
+        async function savePelanggaran(e) {
             e.preventDefault();
             const id = document.getElementById('pelanggaran-id').value;
             const data = {
@@ -1588,16 +1596,16 @@ CREATE TABLE IF NOT EXISTS perizinan (
                 showNotification('Catatan pelanggaran berhasil disimpan.', 'success');
             }
 
-            saveToLocalStorage();
+            await saveToSupabase();
             closeModal('modal-pelanggaran');
             renderPelanggaranTable();
             renderDashboard();
         }
 
-        function deletePelanggaran(id) {
+        async function deletePelanggaran(id) {
             if (confirm('Hapus catatan pelanggaran ini?')) {
                 appData.pelanggaran = appData.pelanggaran.filter(p => p.id !== parseInt(id));
-                saveToLocalStorage();
+                await saveToSupabase();
                 renderPelanggaranTable();
                 renderDashboard();
                 showNotification('Catatan pelanggaran dihapus.', 'info');
@@ -1641,7 +1649,7 @@ CREATE TABLE IF NOT EXISTS perizinan (
             openModal('modal-prestasi');
         }
 
-        function savePrestasi(e) {
+        async function savePrestasi(e) {
             e.preventDefault();
             const data = {
                 id: Date.now(),
@@ -1656,17 +1664,17 @@ CREATE TABLE IF NOT EXISTS perizinan (
             };
 
             appData.prestasi.push(data);
-            saveToLocalStorage();
+            await saveToSupabase();
             closeModal('modal-prestasi');
             renderPrestasiTable();
             renderDashboard();
             showNotification('Catatan prestasi berhasil disimpan.', 'success');
         }
 
-        function deletePrestasi(id) {
+        async function deletePrestasi(id) {
             if (confirm('Hapus catatan prestasi ini?')) {
                 appData.prestasi = appData.prestasi.filter(p => p.id !== parseInt(id));
-                saveToLocalStorage();
+                await saveToSupabase();
                 renderPrestasiTable();
                 renderDashboard();
                 showNotification('Catatan prestasi dihapus.', 'info');
@@ -1710,7 +1718,7 @@ CREATE TABLE IF NOT EXISTS perizinan (
             openModal('modal-pembinaan');
         }
 
-        function savePembinaan(e) {
+        async function savePembinaan(e) {
             e.preventDefault();
             const data = {
                 id: Date.now(),
@@ -1724,17 +1732,17 @@ CREATE TABLE IF NOT EXISTS perizinan (
             };
 
             appData.pembinaan.push(data);
-            saveToLocalStorage();
+            await saveToSupabase();
             closeModal('modal-pembinaan');
             renderPembinaanTable();
             renderDashboard();
             showNotification('Catatan pembinaan berhasil disimpan.', 'success');
         }
 
-        function deletePembinaan(id) {
+        async function deletePembinaan(id) {
             if (confirm('Hapus data pembinaan ini?')) {
                 appData.pembinaan = appData.pembinaan.filter(p => p.id !== parseInt(id));
-                saveToLocalStorage();
+                await saveToSupabase();
                 renderPembinaanTable();
                 renderDashboard();
                 showNotification('Data pembinaan dihapus.', 'info');
@@ -1769,7 +1777,7 @@ CREATE TABLE IF NOT EXISTS perizinan (
             openModal('modal-kegiatan');
         }
 
-        function saveKegiatan(e) {
+        async function saveKegiatan(e) {
             e.preventDefault();
             const data = {
                 id: Date.now(),
@@ -1784,17 +1792,17 @@ CREATE TABLE IF NOT EXISTS perizinan (
             };
 
             appData.kegiatan.push(data);
-            saveToLocalStorage();
+            await saveToSupabase();
             closeModal('modal-kegiatan');
             renderKegiatanTable();
             renderDashboard();
             showNotification('Kegiatan kesiswaan berhasil disimpan.', 'success');
         }
 
-        function deleteKegiatan(id) {
+        async function deleteKegiatan(id) {
             if (confirm('Hapus kegiatan ini?')) {
                 appData.kegiatan = appData.kegiatan.filter(k => k.id !== parseInt(id));
-                saveToLocalStorage();
+                await saveToSupabase();
                 renderKegiatanTable();
                 renderDashboard();
                 showNotification('Kegiatan dihapus.', 'info');
@@ -1839,7 +1847,7 @@ CREATE TABLE IF NOT EXISTS perizinan (
             openModal('modal-perizinan');
         }
 
-        function savePerizinan(e) {
+        async function savePerizinan(e) {
             e.preventDefault();
             const data = {
                 id: Date.now(),
@@ -1853,17 +1861,17 @@ CREATE TABLE IF NOT EXISTS perizinan (
             };
 
             appData.perizinan.push(data);
-            saveToLocalStorage();
+            await saveToSupabase();
             closeModal('modal-perizinan');
             renderPerizinanTable();
             renderDashboard();
             showNotification('Perizinan siswa berhasil dicatat.', 'success');
         }
 
-        function deletePerizinan(id) {
+        async function deletePerizinan(id) {
             if (confirm('Hapus data perizinan ini?')) {
                 appData.perizinan = appData.perizinan.filter(p => p.id !== parseInt(id));
-                saveToLocalStorage();
+                await saveToSupabase();
                 renderPerizinanTable();
                 showNotification('Perizinan dihapus.', 'info');
             }
@@ -2026,9 +2034,11 @@ CREATE TABLE IF NOT EXISTS perizinan (
         }
 
         function renderPengaturan() {
+            validateAppData();
             const kelasBody = document.getElementById('pengaturan-kelas-body');
             if (kelasBody) {
-                kelasBody.innerHTML = appData.kelas.map(k => {
+                const sortedKelas = [...appData.kelas].sort((a,b) => b.localeCompare(a));
+                kelasBody.innerHTML = sortedKelas.map(k => {
                     const count = appData.siswa.filter(s => s.kelas === k).length;
                     return `
                         <tr class="hover:bg-slate-100">
@@ -2053,12 +2063,13 @@ CREATE TABLE IF NOT EXISTS perizinan (
 
         function openKelasModal() { openModal('modal-kelas'); }
 
-        function saveKelas(e) {
+        async function saveKelas(e) {
             e.preventDefault();
+            validateAppData();
             const nama = document.getElementById('input-nama-kelas').value;
             if (!appData.kelas.includes(nama)) {
                 appData.kelas.push(nama);
-                saveToLocalStorage();
+                await saveToSupabase();
                 renderPengaturan();
                 populateDropdowns();
                 closeModal('modal-kelas');
@@ -2068,9 +2079,10 @@ CREATE TABLE IF NOT EXISTS perizinan (
             }
         }
 
-        function deleteKelas(nama) {
+        async function deleteKelas(nama) {
+            validateAppData();
             appData.kelas = appData.kelas.filter(k => k !== nama);
-            saveToLocalStorage();
+            await saveToSupabase();
             renderPengaturan();
             populateDropdowns();
             showNotification('Kelas dihapus.', 'info');
@@ -2078,12 +2090,13 @@ CREATE TABLE IF NOT EXISTS perizinan (
 
         function openGuruModal() { openModal('modal-guru'); }
 
-        function saveGuru(e) {
+        async function saveGuru(e) {
             e.preventDefault();
+            validateAppData();
             const nama = document.getElementById('input-nama-guru').value;
             if (!appData.guru.includes(nama)) {
                 appData.guru.push(nama);
-                saveToLocalStorage();
+                await saveToSupabase();
                 renderPengaturan();
                 populateDropdowns();
                 closeModal('modal-guru');
@@ -2093,9 +2106,10 @@ CREATE TABLE IF NOT EXISTS perizinan (
             }
         }
 
-        function deleteGuru(nama) {
+        async function deleteGuru(nama) {
+            validateAppData();
             appData.guru = appData.guru.filter(g => g !== nama);
-            saveToLocalStorage();
+            await saveToSupabase();
             renderPengaturan();
             populateDropdowns();
             showNotification('Data guru dihapus.', 'info');
