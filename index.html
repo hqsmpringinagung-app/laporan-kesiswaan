@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Rapor Program GEMBIRA - Supabase Sync</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- html2pdf bundle for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; }
+        .glass-card { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(12px); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white !important; color: black !important; font-size: 10pt; }
+            @page { size: A4; margin: 0; }
+            #rapor-printable-area { border: none !important; box-shadow: none !important; padding: 0 !important; width: 100% !important; max-width: none !important; margin: 0 !important; min-height: auto !important; }
+            .page-break { page-break-after: always; }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col bg-slate-900 selection:bg-emerald-500 selection:text-white">
+
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Alert / Confirmation Modal -->
+    <div id="alert-modal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 text-center transform transition-all scale-100 border border-slate-100">
+            <div id="alert-icon" class="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4 text-2xl shadow-sm">
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+            <h3 id="alert-title" class="text-xl font-bold text-slate-800 mb-2">Pemberitahuan</h3>
+            <p id="alert-message" class="text-slate-600 text-sm mb-6 leading-relaxed"></p>
+            <button onclick="closeAlertModal()" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-lg shadow-emerald-600/30 transition">
+                Mengerti
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center text-white hidden">
+        <div class="flex flex-col items-center gap-3">
+            <i class="fa-solid fa-circle-notch fa-spin text-4xl text-emerald-500"></i>
+            <p class="text-sm font-medium tracking-wide">Sinkronisasi Supabase...</p>
+        </div>
+    </div>
+
+    <header id="main-header" class="bg-slate-950/90 backdrop-blur-md border-b border-slate-800 text-white shadow-xl sticky top-0 z-40 hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="handleSecretLogoClick()" title="Klik 5x untuk bypass admin">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-emerald-500/20">
+                    G
+                </div>
+                <div>
+                    <h1 class="font-bold text-base leading-tight tracking-wide text-white">E-RAPOR PROGRAM GEMBIRA</h1>
+                    <p class="text-xs text-emerald-400 font-medium flex items-center gap-1">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Supabase Multi-Device Sync</span>
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <p id="user-display-name" class="text-sm font-semibold text-emerald-400">Admin</p>
+                    <p id="user-display-role" class="text-xs text-slate-400">Ruangan Admin</p>
+                </div>
+                <button onclick="handleLogout()" class="px-3.5 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/20 text-xs font-semibold transition flex items-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Keluar</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow flex flex-col">
+
+        <!-- LOGIN VIEW -->
+        <section id="view-login" class="flex-grow flex items-center justify-center p-4 bg-slate-900 relative overflow-hidden min-h-[90vh]">
+            <div class="absolute -top-32 -left-32 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-teal-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-slate-100 z-10 my-auto">
+                <div class="text-center mb-6">
+                    <div onclick="handleSecretLogoClick()" class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 mb-4 text-3xl shadow-inner cursor-pointer hover:scale-105 transition" title="Klik 5x untuk bypass admin">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 tracking-tight">Ruang Masuk GEMBIRA</h2>
+                    <p class="text-xs text-slate-500 mt-1">Sistem Terpadu E-Rapor Madrasah (Supabase)</p>
+                </div>
+
+                <form onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Pilih Ruangan</label>
+                        <select id="login-room" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 text-sm font-semibold text-slate-700 bg-slate-50 transition">
+                            <option value="Admin">Ruangan Admin</option>
+                            <option value="Tajwid">Ruangan Tajwid</option>
+                            <option value="Konseling dan Adab">Ruangan Konseling dan Adab</option>
+                            <option value="Fiqh">Ruangan Fiqh</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">Username</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" id="login-username" required placeholder="Masukkan username" class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 text-sm font-medium">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider">Password</label>
+                            <button type="button" onclick="togglePasswordVisibility()" class="text-xs text-emerald-600 font-semibold hover:underline flex items-center gap-1">
+                                <i id="eye-icon" class="fa-solid fa-eye"></i> <span id="eye-text">Tampilkan</span>
+                            </button>
+                        </div>
+                        <div class="relative">
+                            <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="password" id="login-password" required placeholder="••••••••" class="w-full pl-11 pr-10 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500 text-sm font-medium font-mono">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition duration-200 flex items-center justify-center gap-2 mt-2">
+                        <span>Masuk Ruangan</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ADMIN PANEL VIEW -->
+        <section id="view-admin" class="hidden flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+            
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-800/90 backdrop-blur border border-slate-700 p-6 rounded-3xl shadow-lg text-white">
+                <div>
+                    <h2 class="text-xl font-bold tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-emerald-400"></i> Panel Kendali Admin
+                    </h2>
+                    <p class="text-xs text-slate-300 mt-1">Kelola Akun, Kelas, Mata Pelajaran, Data Siswa, Pemantauan Guru, Rapor PDF, dan Skema SQL Supabase</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="showAdminTab('tab-users', this)" class="admin-nav-btn px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-600 text-white shadow transition">
+                        <i class="fa-solid fa-users-gear mr-1"></i> Akun
+                    </button>
+                    <button onclick="showAdminTab('tab-classes', this)" class="admin-nav-btn px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-700 text-slate-200 hover:bg-slate-600 transition">
+                        <i class="fa-solid fa-school mr-1"></i> Kelas
+                    </button>
+                    <button onclick="showAdminTab('tab-subjects', this)" class="admin-nav-btn px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-700 text-slate-200 hover:bg-slate-600 transition">
+                        <i class="fa-solid fa-book-open mr-1"></i> Mapel
+                    </button>
+                    <button onclick="showAdminTab('tab-students', this)" class="admin-nav-btn px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-700 text-slate-200 hover:bg-slate-600 transition">
+                        <i class="fa-solid fa-user-graduate mr-1"></i> Siswa
+                    </button>
+                    <button onclick="showAdminTab('tab-active-users', this)" class="admin-nav-btn px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-700 text-slate-200 hover:bg-slate-600 transition">
+                        <i class="fa-solid fa-signal mr-1 text-emerald-400"></i> Guru
+                    </button>
+                    <button onclick="showAdminTab('tab-rapor', this)" class="admin-nav-btn px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-700 text-slate-200 hover:bg-slate-600 transition">
+                        <i class="fa-solid fa-file-pdf mr-1"></i> Rapor
+                    </button>
+                    <button onclick="showAdminTab('tab-backend-code', this)" class="admin-nav-btn px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-700 text-emerald-300 hover:bg-slate-600 transition border border-emerald-500/30">
+                        <i class="fa-solid fa-database mr-1"></i> SQL Supabase
+                    </button>
+                </div>
+            </div>
+
+            <!-- ADMIN TAB 1: USERS -->
+            <div id="tab-users" class="admin-tab-content grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100 h-fit">
+                    <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus text-emerald-600"></i> Buat Akun Ruangan
+                    </h3>
+                    <form onsubmit="handleSaveUser(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Pilih Ruangan</label>
+                            <select id="admin-user-room" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 focus:ring-emerald-500 focus:border-emerald-500">
+                                <option value="Admin">Admin</option>
+                                <option value="Tajwid">Tajwid</option>
+                                <option value="Konseling dan Adab">Konseling dan Adab</option>
+                                <option value="Fiqh">Fiqh</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Username</label>
+                            <input type="text" id="admin-user-name" required placeholder="misal: tajwid" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Password</label>
+                            <input type="text" id="admin-user-pass" required placeholder="Kata sandi" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-medium font-mono">
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl text-xs hover:bg-emerald-700 shadow-md transition">
+                            Simpan Akun
+                        </button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-2 bg-white p-6 rounded-3xl shadow-md border border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-base mb-4">Daftar Akun Ruangan Terdaftar</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 border-b border-slate-200 text-slate-700">
+                                    <th class="p-3 font-bold">Ruangan</th>
+                                    <th class="p-3 font-bold">Username</th>
+                                    <th class="p-3 font-bold">Password</th>
+                                    <th class="p-3 font-bold text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-users-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN TAB 2: CLASSES -->
+            <div id="tab-classes" class="admin-tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100 h-fit">
+                    <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-square-plus text-emerald-600"></i> Buat Kelas Baru
+                    </h3>
+                    <form onsubmit="handleSaveClass(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Nama Kelas</label>
+                            <input type="text" id="admin-class-name" required placeholder="misal: Kelas 1 GEMBIRA" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Wali Kelas / Pengampu</label>
+                            <input type="text" id="admin-class-teacher" placeholder="Nama Ustadz/Ustadzah" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-medium">
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl text-xs hover:bg-emerald-700 shadow-md transition">
+                            Simpan Kelas
+                        </button>
+                    </form>
+                </div>
+                <div class="lg:col-span-2 bg-white p-6 rounded-3xl shadow-md border border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-base mb-4">Daftar Kelas</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 border-b border-slate-200 text-slate-700">
+                                    <th class="p-3 font-bold">Nama Kelas</th>
+                                    <th class="p-3 font-bold">Wali Kelas</th>
+                                    <th class="p-3 font-bold text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-classes-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN TAB 3: SUBJECTS -->
+            <div id="tab-subjects" class="admin-tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100 h-fit">
+                    <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-book text-emerald-600"></i> Input Mata Pelajaran
+                    </h3>
+                    <form onsubmit="handleSaveSubject(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Nama Mata Pelajaran</label>
+                            <input type="text" id="admin-subject-name" required placeholder="misal: Tajwid & Makhraj" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Ruangan Penanggung Jawab</label>
+                            <select id="admin-subject-room" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700">
+                                <option value="Tajwid">Tajwid</option>
+                                <option value="Konseling dan Adab">Konseling dan Adab</option>
+                                <option value="Fiqh">Fiqh</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Guru Pengampu</label>
+                            <input type="text" id="admin-subject-teacher" required placeholder="misal: Ustadz Ahmad, Lc." class="w-full p-3 rounded-xl border border-slate-200 text-xs font-medium">
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl text-xs hover:bg-emerald-700 shadow-md transition">
+                            Simpan Mapel
+                        </button>
+                    </form>
+                </div>
+                <div class="lg:col-span-2 bg-white p-6 rounded-3xl shadow-md border border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-base mb-4">Daftar Mata Pelajaran Terintegrasi</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 border-b border-slate-200 text-slate-700">
+                                    <th class="p-3 font-bold">Mata Pelajaran</th>
+                                    <th class="p-3 font-bold">Ruangan Terkait</th>
+                                    <th class="p-3 font-bold">Guru Pengampu</th>
+                                    <th class="p-3 font-bold text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-subjects-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN TAB 4: STUDENTS -->
+            <div id="tab-students" class="admin-tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100 h-fit">
+                    <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-address-card text-emerald-600"></i> Input Data Siswa
+                    </h3>
+                    <form onsubmit="handleSaveStudent(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">NIS / ID Siswa</label>
+                            <input type="text" id="admin-student-nis" required placeholder="misal: 2026001" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Nama Lengkap Siswa</label>
+                            <input type="text" id="admin-student-name" required placeholder="Nama Lengkap" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Pilih Kelas</label>
+                            <select id="admin-student-class" required class="w-full p-3 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700">
+                                <!-- Dynamic options -->
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl text-xs hover:bg-emerald-700 shadow-md transition">
+                            Simpan Data Siswa
+                        </button>
+                    </form>
+                </div>
+                <div class="lg:col-span-2 bg-white p-6 rounded-3xl shadow-md border border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-base mb-4">Daftar Seluruh Siswa</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 border-b border-slate-200 text-slate-700">
+                                    <th class="p-3 font-bold">NIS</th>
+                                    <th class="p-3 font-bold">Nama Siswa</th>
+                                    <th class="p-3 font-bold">Kelas</th>
+                                    <th class="p-3 font-bold text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-students-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN TAB 5: ACTIVE USERS MONITORING -->
+            <div id="tab-active-users" class="admin-tab-content hidden space-y-4">
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-users text-emerald-600"></i> Aktivitas Ruangan & Guru
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Daftar ustadz/ustadzah yang sedang aktif menggunakan ruangan sistem.</p>
+                        </div>
+                        <button onclick="renderAdminActiveUsers()" class="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold rounded-xl transition flex items-center gap-1.5 border border-emerald-200">
+                            <i class="fa-solid fa-rotate"></i> Muat Ulang
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 border-b border-slate-200 text-slate-700">
+                                    <th class="p-3 font-bold">Ruangan</th>
+                                    <th class="p-3 font-bold">Username Pengguna</th>
+                                    <th class="p-3 font-bold">Status Koneksi</th>
+                                    <th class="p-3 font-bold">Waktu Masuk Terakhir</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-active-users-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN TAB 6: RAPOR PREVIEW & DOWNLOAD -->
+            <div id="tab-rapor" class="admin-tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex flex-wrap items-center gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Pilih Kelas</label>
+                            <select id="rapor-filter-class" onchange="updateRaporStudentSelect()" class="p-3 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 min-w-[180px]">
+                                <!-- Options -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Pilih Siswa</label>
+                            <select id="rapor-filter-student" onchange="generateRaporPreview()" class="p-3 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 min-w-[220px]">
+                                <!-- Options -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="downloadPDFRapor()" class="px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
+                            <i class="fa-solid fa-file-pdf text-sm"></i>
+                            <span>Unduh PDF Rapor (A4 Presisi)</span>
+                        </button>
+                        <button onclick="window.print()" class="px-4 py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
+                            <i class="fa-solid fa-print"></i>
+                            <span>Cetak</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- RAPOR PRINTABLE CONTAINER (A4 Precision Size without outer box) -->
+                <div class="bg-slate-950 p-4 sm:p-8 rounded-3xl overflow-x-auto flex justify-center border border-slate-800">
+                    <div id="rapor-printable-area" class="bg-white text-slate-900 p-[10mm_4mm_4mm_4mm] shadow-2xl w-full max-w-[210mm] min-h-[297mm] text-xs leading-tight box-border flex flex-col justify-start">
+                        <!-- Dynamic Report Preview Rendered Here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADMIN TAB 7: BACKEND CODE (Supabase SQL Schema) -->
+            <div id="tab-backend-code" class="admin-tab-content hidden space-y-4">
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 pb-4 border-b border-slate-100">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-database text-emerald-600"></i> Skema SQL Supabase (Database Tables)
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Jalankan perintah SQL ini di SQL Editor Supabase Anda untuk membuat tabel-tabel pendukung.</p>
+                        </div>
+                        <button onclick="copyBackendCode()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-2">
+                            <i class="fa-solid fa-copy"></i>
+                            <span>Salin Skema SQL</span>
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <textarea id="backend-code-textarea" readonly class="w-full h-96 p-4 bg-slate-950 text-emerald-400 font-mono text-xs rounded-2xl border border-slate-800 focus:outline-none custom-scrollbar leading-relaxed">-- Skema Tabel Database Supabase untuk E-Rapor GEMBIRA
+
+-- 1. Tabel Users (Akun Ruangan)
+CREATE TABLE IF NOT EXISTS users (
+    id TEXT PRIMARY KEY,
+    room TEXT NOT NULL,
+    username TEXT NOT NULL,
+    pass TEXT NOT NULL
+);
+
+-- 2. Tabel Classes (Kelas)
+CREATE TABLE IF NOT EXISTS classes (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    teacher TEXT
+);
+
+-- 3. Tabel Subjects (Mata Pelajaran)
+CREATE TABLE IF NOT EXISTS subjects (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    room TEXT NOT NULL,
+    teacher TEXT
+);
+
+-- 4. Tabel Students (Data Siswa)
+CREATE TABLE IF NOT EXISTS students (
+    id TEXT PRIMARY KEY,
+    nis TEXT NOT NULL,
+    name TEXT NOT NULL,
+    class_id TEXT REFERENCES classes(id) ON DELETE CASCADE
+);
+
+-- 5. Tabel Indicators (Indikator Ketercapaian)
+CREATE TABLE IF NOT EXISTS indicators (
+    id TEXT PRIMARY KEY,
+    subject_id TEXT REFERENCES subjects(id) ON DELETE CASCADE,
+    text TEXT NOT NULL
+);
+
+-- 6. Tabel Grades (Nilai & Pencapaian Siswa)
+CREATE TABLE IF NOT EXISTS grades (
+    id TEXT PRIMARY KEY, -- format: studentId_subjectId
+    student_id TEXT NOT NULL,
+    subject_id TEXT NOT NULL,
+    score INTEGER,
+    achievements JSONB
+);
+
+-- 7. Tabel Active Sessions (Status Sesi Guru Realtime)
+CREATE TABLE IF NOT EXISTS active_sessions (
+    room TEXT PRIMARY KEY,
+    username TEXT,
+    time TEXT
+);
+</textarea>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TEACHER PANEL VIEW -->
+        <section id="view-teacher" class="hidden flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+            
+            <!-- Room Header Banner -->
+            <div class="bg-gradient-to-r from-emerald-800 via-teal-800 to-slate-900 text-white p-6 rounded-3xl shadow-xl border border-emerald-700/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-xs font-bold uppercase tracking-wider mb-2 inline-block border border-emerald-500/30">
+                        Ruangan Pelajaran Aktif
+                    </span>
+                    <h2 id="teacher-room-title" class="text-2xl font-bold tracking-tight">Ruangan Tajwid</h2>
+                    <p class="text-xs text-emerald-100/80 mt-1">Atur Indikator Ketercapaian, Nilai Angka, dan Evaluasi Capaian Siswa secara Real-Time</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="showTeacherTab('teacher-tab-indicators', this)" class="teacher-nav-btn px-4 py-2.5 bg-white text-slate-800 font-bold text-xs rounded-xl shadow hover:bg-slate-100 transition">
+                        <i class="fa-solid fa-list-check mr-1.5 text-emerald-600"></i> Kelola Indikator
+                    </button>
+                    <button onclick="showTeacherTab('teacher-tab-grading', this)" class="teacher-nav-btn px-4 py-2.5 bg-emerald-500/20 text-white font-bold text-xs rounded-xl hover:bg-emerald-500/30 border border-white/20 transition">
+                        <i class="fa-solid fa-pen-to-square mr-1.5"></i> Input Nilai & Centang
+                    </button>
+                </div>
+            </div>
+
+            <!-- TEACHER TAB 1: KELOLA INDIKATOR -->
+            <div id="teacher-tab-indicators" class="teacher-tab-content grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100 h-fit">
+                    <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-plus-circle text-emerald-600"></i> Tambah Indikator Baru
+                    </h3>
+                    <form onsubmit="handleSaveIndicator(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Mata Pelajaran</label>
+                            <select id="teacher-indicator-subject" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700">
+                                <!-- Dynamic options -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Pernyataan Indikator Ketercapaian</label>
+                            <textarea id="teacher-indicator-text" required rows="3" placeholder="misal: Mampu melafalkan makhraj huruf hijaiyah dengan tartil" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-medium focus:ring-emerald-500 focus:border-emerald-500"></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl text-xs hover:bg-emerald-700 shadow-md transition">
+                            Simpan Indikator
+                        </button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-2 bg-white p-6 rounded-3xl shadow-md border border-slate-100">
+                    <h3 class="font-bold text-slate-800 text-base mb-4">Daftar Indikator Ketercapaian Ruangan Ini</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 border-b border-slate-200 text-slate-700">
+                                    <th class="p-3 font-bold">Mapel</th>
+                                    <th class="p-3 font-bold">Deskripsi Indikator</th>
+                                    <th class="p-3 font-bold text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-indicators-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TEACHER TAB 2: INPUT NILAI & CENTANG KETERCAPAIAN -->
+            <div id="teacher-tab-grading" class="teacher-tab-content hidden space-y-6">
+                <!-- Filter bar -->
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Pilih Kelas</label>
+                        <select id="grade-select-class" onchange="onGradeClassChange()" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700">
+                            <!-- Dynamic -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Pilih Siswa</label>
+                        <select id="grade-select-student" onchange="loadStudentGradeForm()" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700">
+                            <!-- Dynamic -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Mata Pelajaran</label>
+                        <select id="grade-select-subject" onchange="loadStudentGradeForm()" class="w-full p-3 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700">
+                            <!-- Dynamic -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Grading Form -->
+                <div class="bg-white p-6 rounded-3xl shadow-md border border-slate-100">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-slate-100 mb-6 gap-4">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base">Lembar Penilaian & Evaluasi Indikator</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Isi nilai angka dan tentukan status ketercapaian per indikator (Sebelah Kiri: Tercapai | Sebelah Kanan: Belum Tercapai)</p>
+                        </div>
+                        <button onclick="saveStudentGrade()" class="px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Simpan Penilaian</span>
+                        </button>
+                    </div>
+
+                    <!-- Numeric Grade Input -->
+                    <div class="mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-200/80 max-w-sm">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Nilai Akhir Mapel (0 - 100)</label>
+                        <div class="flex items-center gap-3">
+                            <input type="number" id="input-numeric-grade" min="0" max="100" placeholder="0" class="w-28 p-3 text-xl font-extrabold text-slate-800 rounded-xl border border-slate-300 text-center focus:ring-emerald-500 focus:border-emerald-500">
+                            <span class="text-xs text-slate-500 leading-snug">Nilai akan dikonversi otomatis menjadi predikat (A/B/C/D) pada Rapor.</span>
+                        </div>
+                    </div>
+
+                    <!-- Checklist Table -->
+                    <h4 class="font-bold text-slate-800 text-sm mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-square-check text-emerald-600"></i>
+                        <span>Evaluasi Indikator Capaian Siswa</span>
+                    </h4>
+                    <div class="overflow-x-auto border border-slate-200 rounded-2xl">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 border-b border-slate-200 text-slate-700">
+                                    <th class="p-3.5 font-bold w-12 text-center">No</th>
+                                    <th class="p-3.5 font-bold">Pernyataan Indikator Capaian</th>
+                                    <th class="p-3.5 font-bold w-36 text-center bg-emerald-50 text-emerald-800 border-l border-r border-slate-200">
+                                        <i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> Tercapai (Kiri)
+                                    </th>
+                                    <th class="p-3.5 font-bold w-36 text-center bg-rose-50 text-rose-800">
+                                        <i class="fa-solid fa-circle-xmark text-rose-500 mr-1"></i> Belum Tercapai (Kanan)
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-grading-checklist" class="divide-y divide-slate-200">
+                                <!-- Dynamic check rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Konfigurasi Supabase Proyek Anda
+        const SUPABASE_URL = 'https://ygsjtaputrcruxgqfcbb.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlnc2p0YXB1dHJjcnV4Z3FmY2JiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU5NDI0MDAsImV4cCI6MjEwMTUxODQwMH0.UomgHIAYAkpGZj-B36NHwwhe0jF5BeJWjuJHObNTGuY';
+        
+        let supabaseClient = null;
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        }
+
+        let db = {
+            users: [],
+            classes: [],
+            subjects: [],
+            students: [],
+            indicators: [],
+            grades: {},
+            activeSessions: {}
+        };
+        let currentUser = null;
+        let logoClickCount = 0;
+        let logoClickTimer = null;
+        let syncInterval = null;
+
+        const DEFAULT_DATA = {
+            users: [
+                { id: 'u_admin', room: 'Admin', username: 'admin', pass: 'admin123' },
+                { id: 'u_tajwid', room: 'Tajwid', username: 'ustadz.tajwid', pass: 'tajwid123' },
+                { id: 'u_adab', room: 'Konseling dan Adab', username: 'ustadz.adab', pass: 'adab123' },
+                { id: 'u_fiqh', room: 'Fiqh', username: 'ustadz.fiqh', pass: 'fiqh123' }
+            ],
+            classes: [
+                { id: 'c_1', name: 'Kelas 1 A', teacher: 'Ustadz Ahmad, Lc.' },
+                { id: 'c_2', name: 'Kelas 2 B', teacher: 'Ustadzah Fatimah, S.Pd.' }
+            ],
+            subjects: [
+                { id: 's_1', name: 'Tahsin & Tajwid', room: 'Tajwid', teacher: 'Ustadz Ahmad, Lc.' },
+                { id: 's_2', name: 'Akhlak & Adab Harian', room: 'Konseling dan Adab', teacher: 'Ustadzah Fatimah, S.Pd.' },
+                { id: 's_3', name: 'Fiqh Ibadah Dasar', room: 'Fiqh', teacher: 'Ustadz Farhan, M.Pd.' }
+            ],
+            students: [
+                { id: 'st_1', nis: '202601', name: 'Abdullah Umar', classId: 'c_1' },
+                { id: 'st_2', nis: '202602', name: 'Aisyah Humaira', classId: 'c_1' }
+            ],
+            indicators: [
+                { id: 'i_1', subjectId: 's_1', text: 'Mampu melafalkan huruf-huruf qalqalah dengan benar' },
+                { id: 'i_2', subjectId: 's_1', text: 'Menerapkan hukum nun mati dan tanwin (Idgham & Ikhfa)' }
+            ],
+            grades: {},
+            activeSessions: {}
+        };
+
+        window.onload = function() {
+            loadDbFromSupabase(true);
+            syncInterval = setInterval(() => {
+                const activeEl = document.activeElement;
+                const isTypingGrade = activeEl && (activeEl.id === 'input-numeric-grade' || activeEl.name?.startsWith('achieve_'));
+                if (!isTypingGrade) {
+                    loadDbFromSupabase(false);
+                }
+            }, 4000);
+        };
+
+        function showLoading() {
+            document.getElementById('loading-overlay').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-overlay').classList.add('hidden');
+        }
+
+        async function loadDbFromSupabase(showSpinner = false) {
+            if (showSpinner) showLoading();
+            
+            if (!supabaseClient) {
+                if (showSpinner) hideLoading();
+                loadLocalFallback();
+                return;
+            }
+
+            try {
+                const [usersRes, classesRes, subjectsRes, studentsRes, indicatorsRes, gradesRes, sessionsRes] = await Promise.all([
+                    supabaseClient.from('users').select('*'),
+                    supabaseClient.from('classes').select('*'),
+                    supabaseClient.from('subjects').select('*'),
+                    supabaseClient.from('students').select('*'),
+                    supabaseClient.from('indicators').select('*'),
+                    supabaseClient.from('grades').select('*'),
+                    supabaseClient.from('active_sessions').select('*')
+                ]);
+
+                db.users = usersRes.data && usersRes.data.length > 0 ? usersRes.data : DEFAULT_DATA.users;
+                db.classes = classesRes.data ? classesRes.data.map(c => ({ id: c.id, name: c.name, teacher: c.teacher })) : [];
+                db.subjects = subjectsRes.data ? subjectsRes.data.map(s => ({ id: s.id, name: s.name, room: s.room, teacher: s.teacher })) : [];
+                db.students = studentsRes.data ? studentsRes.data.map(st => ({ id: st.id, nis: st.nis, name: st.name, classId: st.class_id })) : [];
+                db.indicators = indicatorsRes.data ? indicatorsRes.data.map(i => ({ id: i.id, subjectId: i.subject_id, text: i.text })) : [];
+                
+                db.grades = {};
+                if (gradesRes.data) {
+                    gradesRes.data.forEach(g => {
+                        db.grades[g.id] = { score: g.score, achievements: g.achievements || {} };
+                    });
+                }
+
+                db.activeSessions = {};
+                if (sessionsRes.data) {
+                    sessionsRes.data.forEach(s => {
+                        db.activeSessions[s.room] = { username: s.username, time: s.time };
+                    });
+                }
+
+                if (showSpinner) hideLoading();
+                refreshCurrentViewUI();
+            } catch (err) {
+                if (showSpinner) hideLoading();
+                loadLocalFallback();
+            }
+        }
+
+        function loadLocalFallback() {
+            const savedDb = localStorage.getItem('gembira_supabase_local_fallback');
+            if (savedDb) {
+                try { db = JSON.parse(savedDb); } catch(e) { db = { ...DEFAULT_DATA }; }
+            } else {
+                db = { ...DEFAULT_DATA };
+                saveLocalFallback();
+            }
+            refreshCurrentViewUI();
+        }
+
+        function saveLocalFallback() {
+            localStorage.setItem('gembira_supabase_local_fallback', JSON.stringify(db));
+        }
+
+        async function updateActiveSession(user) {
+            if (!user) return;
+            const now = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            db.activeSessions[user.room] = { username: user.username, time: now };
+            
+            if (supabaseClient) {
+                try {
+                    await supabaseClient.from('active_sessions').upsert({
+                        room: user.room,
+                        username: user.username,
+                        time: now
+                    });
+                } catch(e) {
+                    saveLocalFallback();
+                }
+            } else {
+                saveLocalFallback();
+            }
+        }
+
+        function refreshCurrentViewUI() {
+            if (!currentUser) return;
+            if (currentUser.room === 'Admin') {
+                const activeTab = document.querySelector('.admin-tab-content:not(.hidden)');
+                const isRaporTabActive = activeTab && activeTab.id === 'tab-rapor';
+
+                renderAdminUsers();
+                renderAdminClasses();
+                renderAdminSubjects();
+                renderAdminStudents();
+                renderAdminActiveUsers();
+                
+                if (!isRaporTabActive) {
+                    populateRaporSelects();
+                }
+            } else {
+                renderTeacherIndicators();
+                const studentId = document.getElementById('grade-select-student').value;
+                const subjectId = document.getElementById('grade-select-subject').value;
+                if (studentId && subjectId) {
+                    const activeEl = document.activeElement;
+                    const isTypingGrade = activeEl && (activeEl.id === 'input-numeric-grade' || activeEl.name?.startsWith('achieve_'));
+                    if (!isTypingGrade) {
+                        loadStudentGradeForm();
+                    }
+                }
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' ? 'bg-emerald-600 text-white' : (type === 'error' ? 'bg-rose-600 text-white' : 'bg-slate-800 text-white');
+            const icon = type === 'success' ? 'fa-circle-check' : (type === 'error' ? 'fa-circle-exclamation' : 'fa-info-circle');
+
+            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl ${bgClass} text-xs font-semibold transition-all transform duration-300 translate-y-2 opacity-0 border border-white/20`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.remove('translate-y-2', 'opacity-0'); }, 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function showAlert(title, message) {
+            document.getElementById('alert-title').textContent = title;
+            document.getElementById('alert-message').textContent = message;
+            document.getElementById('alert-modal').classList.remove('hidden');
+        }
+
+        function closeAlertModal() {
+            document.getElementById('alert-modal').classList.add('hidden');
+        }
+
+        function togglePasswordVisibility() {
+            const passInput = document.getElementById('login-password');
+            const eyeIcon = document.getElementById('eye-icon');
+            const eyeText = document.getElementById('eye-text');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                eyeIcon.className = 'fa-solid fa-eye-slash';
+                eyeText.textContent = 'Sembunyikan';
+            } else {
+                passInput.type = 'password';
+                eyeIcon.className = 'fa-solid fa-eye';
+                eyeText.textContent = 'Tampilkan';
+            }
+        }
+
+        function copyBackendCode() {
+            const textarea = document.getElementById('backend-code-textarea');
+            textarea.select();
+            document.execCommand('copy');
+            showToast('Skema SQL Supabase berhasil disalin ke clipboard!', 'success');
+        }
+
+        function handleSecretLogoClick() {
+            logoClickCount++;
+            if (logoClickTimer) clearTimeout(logoClickTimer);
+            logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 2000);
+
+            if (logoClickCount >= 5) {
+                logoClickCount = 0;
+                currentUser = db.users.find(u => u.room === 'Admin') || { id: 'u_admin', room: 'Admin', username: 'admin', pass: 'admin123' };
+                updateActiveSession(currentUser);
+                showToast('✨ Shortcut Rahasia: Berhasil masuk ke Ruang Admin!', 'success');
+                document.getElementById('view-login').classList.add('hidden');
+                document.getElementById('main-header').classList.remove('hidden');
+                document.getElementById('user-display-name').textContent = currentUser.username;
+                document.getElementById('user-display-role').textContent = 'Ruangan Admin';
+                showAdminView();
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const selectedRoom = document.getElementById('login-room').value;
+            const username = document.getElementById('login-username').value.trim();
+            const pass = document.getElementById('login-password').value.trim();
+
+            let foundUser = db.users.find(u => u.username.toLowerCase() === username.toLowerCase() && u.pass === pass);
+
+            if (selectedRoom === 'Admin' && (!foundUser || db.users.length === 0) && username === 'admin' && pass === 'admin123') {
+                foundUser = { id: 'u_admin_default', room: 'Admin', username: 'admin', pass: 'admin123' };
+            }
+
+            if (foundUser) {
+                if (foundUser.room !== selectedRoom) {
+                    showAlert('Akses Ditolak', `Akun "${foundUser.username}" terdaftar untuk Ruangan ${foundUser.room}, bukan untuk ${selectedRoom}! Silakan pilih ruangan yang sesuai.`);
+                    return;
+                }
+
+                currentUser = foundUser;
+                updateActiveSession(currentUser);
+                showToast(`Selamat datang di Ruangan ${currentUser.room}!`, 'success');
+                document.getElementById('view-login').classList.add('hidden');
+                document.getElementById('main-header').classList.remove('hidden');
+                document.getElementById('user-display-name').textContent = currentUser.username;
+                document.getElementById('user-display-role').textContent = `Ruangan ${currentUser.room}`;
+
+                if (currentUser.room === 'Admin') {
+                    showAdminView();
+                } else {
+                    showTeacherView(currentUser.room);
+                }
+            } else {
+                showAlert('Login Gagal', 'Username atau Password salah!');
+            }
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            document.getElementById('main-header').classList.add('hidden');
+            document.getElementById('view-admin').classList.add('hidden');
+            document.getElementById('view-teacher').classList.add('hidden');
+            document.getElementById('view-login').classList.remove('hidden');
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+            showToast('Berhasil keluar dari sistem.', 'info');
+        }
+
+        function showAdminView() {
+            document.getElementById('view-admin').classList.remove('hidden');
+            document.getElementById('view-teacher').classList.add('hidden');
+            renderAdminUsers();
+            renderAdminClasses();
+            renderAdminSubjects();
+            renderAdminStudents();
+            renderAdminActiveUsers();
+            populateRaporSelects();
+        }
+
+        function showAdminTab(tabId, btn) {
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            document.querySelectorAll('.admin-nav-btn').forEach(b => {
+                b.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-500/30');
+                b.classList.add('bg-slate-700', 'text-slate-200');
+            });
+            if (btn) {
+                btn.classList.remove('bg-slate-700', 'text-slate-200');
+                btn.classList.add('bg-emerald-600', 'text-white');
+            }
+            if (tabId === 'tab-active-users') {
+                renderAdminActiveUsers();
+            }
+        }
+
+        function renderAdminUsers() {
+            const tbody = document.getElementById('table-users-body');
+            tbody.innerHTML = db.users.length === 0 ? '<tr><td colspan="4" class="p-4 text-center text-slate-400">Belum ada akun ruangan.</td></tr>' : db.users.map(u => `
+                <tr class="hover:bg-slate-50 border-b border-slate-100">
+                    <td class="p-3 font-semibold text-emerald-700">${u.room}</td>
+                    <td class="p-3 font-medium text-slate-800">${u.username}</td>
+                    <td class="p-3 font-mono text-slate-600 font-bold bg-slate-50">${u.pass}</td>
+                    <td class="p-3 text-center">
+                        <button onclick="deleteUser('${u.id}')" class="text-rose-500 hover:text-rose-700 font-semibold text-xs">
+                            <i class="fa-solid fa-trash-can"></i> Hapus
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function handleSaveUser(e) {
+            e.preventDefault();
+            const room = document.getElementById('admin-user-room').value;
+            const username = document.getElementById('admin-user-name').value.trim();
+            const pass = document.getElementById('admin-user-pass').value.trim();
+            const id = 'u_' + Date.now();
+
+            const newUser = { id, room, username, pass };
+            db.users.push(newUser);
+
+            if (supabaseClient) {
+                await supabaseClient.from('users').insert([newUser]);
+            }
+            saveLocalFallback();
+
+            renderAdminUsers();
+            e.target.reset();
+            showToast('Akun ruangan berhasil disimpan!', 'success');
+        }
+
+        async function deleteUser(id) {
+            db.users = db.users.filter(u => u.id !== id);
+            if (supabaseClient) {
+                await supabaseClient.from('users').delete().eq('id', id);
+            }
+            saveLocalFallback();
+            renderAdminUsers();
+            showToast('Akun berhasil dihapus.', 'info');
+        }
+
+        function renderAdminClasses() {
+            const tbody = document.getElementById('table-classes-body');
+            tbody.innerHTML = db.classes.length === 0 ? '<tr><td colspan="3" class="p-4 text-center text-slate-400">Belum ada data kelas.</td></tr>' : db.classes.map(c => `
+                <tr class="hover:bg-slate-50 border-b border-slate-100">
+                    <td class="p-3 font-bold text-slate-800">${c.name}</td>
+                    <td class="p-3 text-slate-600">${c.teacher || '-'}</td>
+                    <td class="p-3 text-center">
+                        <button onclick="deleteClass('${c.id}')" class="text-rose-500 hover:text-rose-700 font-semibold">
+                            <i class="fa-solid fa-trash-can"></i> Hapus
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function handleSaveClass(e) {
+            e.preventDefault();
+            const name = document.getElementById('admin-class-name').value.trim();
+            const teacher = document.getElementById('admin-class-teacher').value.trim();
+            const id = 'c_' + Date.now();
+
+            const newClass = { id, name, teacher };
+            db.classes.push(newClass);
+
+            if (supabaseClient) {
+                await supabaseClient.from('classes').insert([newClass]);
+            }
+            saveLocalFallback();
+
+            renderAdminClasses();
+            populateStudentClassSelects();
+            populateRaporSelects();
+            e.target.reset();
+            showToast('Kelas baru berhasil disimpan!', 'success');
+        }
+
+        async function deleteClass(id) {
+            db.classes = db.classes.filter(c => c.id !== id);
+            if (supabaseClient) {
+                await supabaseClient.from('classes').delete().eq('id', id);
+            }
+            saveLocalFallback();
+            renderAdminClasses();
+            populateStudentClassSelects();
+            populateRaporSelects();
+            showToast('Kelas berhasil dihapus.', 'info');
+        }
+
+        function renderAdminSubjects() {
+            const tbody = document.getElementById('table-subjects-body');
+            tbody.innerHTML = db.subjects.length === 0 ? '<tr><td colspan="4" class="p-4 text-center text-slate-400">Belum ada mata pelajaran.</td></tr>' : db.subjects.map(s => `
+                <tr class="hover:bg-slate-50 border-b border-slate-100">
+                    <td class="p-3 font-bold text-slate-800">${s.name}</td>
+                    <td class="p-3"><span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-lg font-bold text-[10px]">${s.room}</span></td>
+                    <td class="p-3 text-slate-700 font-medium">${s.teacher || '-'}</td>
+                    <td class="p-3 text-center">
+                        <button onclick="deleteSubject('${s.id}')" class="text-rose-500 hover:text-rose-700 font-semibold">
+                            <i class="fa-solid fa-trash-can"></i> Hapus
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function handleSaveSubject(e) {
+            e.preventDefault();
+            const name = document.getElementById('admin-subject-name').value.trim();
+            const room = document.getElementById('admin-subject-room').value;
+            const teacher = document.getElementById('admin-subject-teacher').value.trim();
+            const id = 's_' + Date.now();
+
+            const newSubject = { id, name, room, teacher };
+            db.subjects.push(newSubject);
+
+            if (supabaseClient) {
+                await supabaseClient.from('subjects').insert([newSubject]);
+            }
+            saveLocalFallback();
+
+            renderAdminSubjects();
+            populateRaporSelects();
+            e.target.reset();
+            showToast('Mata Pelajaran berhasil ditambahkan!', 'success');
+        }
+
+        async function deleteSubject(id) {
+            db.subjects = db.subjects.filter(s => s.id !== id);
+            if (supabaseClient) {
+                await supabaseClient.from('subjects').delete().eq('id', id);
+            }
+            saveLocalFallback();
+            renderAdminSubjects();
+            populateRaporSelects();
+            showToast('Mapel berhasil dihapus.', 'info');
+        }
+
+        function populateStudentClassSelects() {
+            const select = document.getElementById('admin-student-class');
+            select.innerHTML = db.classes.length === 0 ? '<option value="">(Buat Kelas Terlebih Dahulu)</option>' : db.classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        }
+
+        function renderAdminStudents() {
+            populateStudentClassSelects();
+            const tbody = document.getElementById('table-students-body');
+            tbody.innerHTML = db.students.length === 0 ? '<tr><td colspan="4" class="p-4 text-center text-slate-400">Belum ada data siswa.</td></tr>' : db.students.map(st => {
+                const cls = db.classes.find(c => c.id === st.classId);
+                return `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="p-3 font-mono font-bold text-slate-700">${st.nis}</td>
+                        <td class="p-3 font-bold text-slate-800">${st.name}</td>
+                        <td class="p-3 text-slate-600">${cls ? cls.name : '-'}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="deleteStudent('${st.id}')" class="text-rose-500 hover:text-rose-700 font-semibold">
+                                <i class="fa-solid fa-trash-can"></i> Hapus
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function handleSaveStudent(e) {
+            e.preventDefault();
+            const nis = document.getElementById('admin-student-nis').value.trim();
+            const name = document.getElementById('admin-student-name').value.trim();
+            const classId = document.getElementById('admin-student-class').value;
+            
+            if (!classId) {
+                showAlert('Peringatan', 'Silakan buat kelas terlebih dahulu sebelum menambahkan siswa!');
+                return;
+            }
+
+            const id = 'st_' + Date.now();
+            const newStudent = { id, nis, name, classId };
+            db.students.push(newStudent);
+
+            if (supabaseClient) {
+                await supabaseClient.from('students').insert([{ id, nis, name, class_id: classId }]);
+            }
+            saveLocalFallback();
+
+            renderAdminStudents();
+            populateRaporSelects();
+            e.target.reset();
+            showToast('Data Siswa berhasil ditambahkan!', 'success');
+        }
+
+        async function deleteStudent(id) {
+            db.students = db.students.filter(st => st.id !== id);
+            if (supabaseClient) {
+                await supabaseClient.from('students').delete().eq('id', id);
+            }
+            saveLocalFallback();
+            renderAdminStudents();
+            populateRaporSelects();
+            showToast('Data siswa berhasil dihapus.', 'info');
+        }
+
+        function renderAdminActiveUsers() {
+            const tbody = document.getElementById('table-active-users-body');
+            const rooms = ['Admin', 'Tajwid', 'Konseling dan Adab', 'Fiqh'];
+            
+            tbody.innerHTML = rooms.map(room => {
+                const session = db.activeSessions[room];
+                const isOnline = !!session;
+                return `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="p-3 font-bold text-slate-800">Ruangan ${room}</td>
+                        <td class="p-3 font-semibold text-emerald-700">${isOnline ? session.username : '-'}</td>
+                        <td class="p-3">
+                            ${isOnline ? '<span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full font-bold text-[10px] inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Aktif</span>' : '<span class="px-2.5 py-1 bg-slate-100 text-slate-500 rounded-full font-bold text-[10px]">Belum Aktif</span>'}
+                        </td>
+                        <td class="p-3 text-slate-600 font-mono">${isOnline ? session.time : '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function showTeacherView(roomName) {
+            document.getElementById('view-teacher').classList.remove('hidden');
+            document.getElementById('view-admin').classList.add('hidden');
+            document.getElementById('teacher-room-title').textContent = `Ruangan ${roomName}`;
+
+            const roomSubjects = db.subjects.filter(s => s.room === roomName);
+            const indSubSelect = document.getElementById('teacher-indicator-subject');
+            indSubSelect.innerHTML = roomSubjects.length === 0 ? '<option value="">(Belum ada mapel untuk ruangan ini)</option>' : roomSubjects.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+
+            renderTeacherIndicators();
+            populateTeacherGradeSelects();
+        }
+
+        function showTeacherTab(tabId, btn) {
+            document.querySelectorAll('.teacher-tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+
+            document.querySelectorAll('.teacher-nav-btn').forEach(b => {
+                b.classList.remove('bg-white', 'text-slate-800');
+                b.classList.add('bg-emerald-500/20', 'text-white');
+            });
+            if (btn) {
+                btn.classList.remove('bg-emerald-500/20', 'text-white');
+                btn.classList.add('bg-white', 'text-slate-800');
+            }
+        }
+
+        function renderTeacherIndicators() {
+            if (!currentUser) return;
+            const roomSubjects = db.subjects.filter(s => s.room === currentUser.room);
+            const roomSubjectIds = roomSubjects.map(s => s.id);
+            const roomIndicators = db.indicators.filter(i => roomSubjectIds.includes(i.subjectId));
+
+            const tbody = document.getElementById('table-indicators-body');
+            tbody.innerHTML = roomIndicators.length === 0 ? '<tr><td colspan="3" class="p-4 text-center text-slate-400">Belum ada indikator untuk ruangan ini.</td></tr>' : roomIndicators.map(ind => {
+                const sub = db.subjects.find(s => s.id === ind.subjectId);
+                return `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="p-3 font-bold text-emerald-800">${sub ? sub.name : '-'}</td>
+                        <td class="p-3 text-slate-800">${ind.text}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="deleteIndicator('${ind.id}')" class="text-rose-500 hover:text-rose-700 font-semibold">
+                                <i class="fa-solid fa-trash-can"></i> Hapus
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function handleSaveIndicator(e) {
+            e.preventDefault();
+            const subjectId = document.getElementById('teacher-indicator-subject').value;
+            const text = document.getElementById('teacher-indicator-text').value.trim();
+            
+            if (!subjectId) {
+                showAlert('Peringatan', 'Silakan buat mata pelajaran untuk ruangan ini terlebih dahulu!');
+                return;
+            }
+
+            const id = 'i_' + Date.now();
+            const newInd = { id, subjectId, text };
+            db.indicators.push(newInd);
+
+            if (supabaseClient) {
+                await supabaseClient.from('indicators').insert([{ id, subject_id: subjectId, text }]);
+            }
+            saveLocalFallback();
+
+            renderTeacherIndicators();
+            e.target.reset();
+            showToast('Indikator ketercapaian berhasil disimpan!', 'success');
+        }
+
+        async function deleteIndicator(id) {
+            db.indicators = db.indicators.filter(i => i.id !== id);
+            if (supabaseClient) {
+                await supabaseClient.from('indicators').delete().eq('id', id);
+            }
+            saveLocalFallback();
+            renderTeacherIndicators();
+            showToast('Indikator berhasil dihapus.', 'info');
+        }
+
+        function populateTeacherGradeSelects() {
+            if (!currentUser) return;
+            const classSelect = document.getElementById('grade-select-class');
+            classSelect.innerHTML = db.classes.length === 0 ? '<option value="">(Belum ada kelas)</option>' : db.classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            
+            onGradeClassChange();
+        }
+
+        function onGradeClassChange() {
+            const classId = document.getElementById('grade-select-class').value;
+            const classStudents = db.students.filter(st => st.classId === classId);
+            const studentSelect = document.getElementById('grade-select-student');
+            studentSelect.innerHTML = classStudents.length === 0 ? '<option value="">(Belum ada siswa)</option>' : classStudents.map(st => `<option value="${st.id}">${st.name} (${st.nis})</option>`).join('');
+
+            const roomSubjects = db.subjects.filter(s => s.room === currentUser.room);
+            const subjectSelect = document.getElementById('grade-select-subject');
+            subjectSelect.innerHTML = roomSubjects.length === 0 ? '<option value="">(Belum ada mapel)</option>' : roomSubjects.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+
+            loadStudentGradeForm();
+        }
+
+        function loadStudentGradeForm() {
+            const studentId = document.getElementById('grade-select-student').value;
+            const subjectId = document.getElementById('grade-select-subject').value;
+
+            if (!studentId || !subjectId) {
+                document.getElementById('input-numeric-grade').value = '';
+                document.getElementById('table-grading-checklist').innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">Pilih siswa dan mata pelajaran terlebih dahulu.</td></tr>';
+                return;
+            }
+
+            const key = `${studentId}_${subjectId}`;
+            const gradeData = db.grades[key] || { score: '', achievements: {} };
+
+            document.getElementById('input-numeric-grade').value = gradeData.score !== undefined ? gradeData.score : '';
+
+            const subjectIndicators = db.indicators.filter(i => i.subjectId === subjectId);
+            const tbody = document.getElementById('table-grading-checklist');
+
+            if (subjectIndicators.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">Belum ada indikator untuk mata pelajaran ini. Tambahkan pada tab "Kelola Indikator".</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = subjectIndicators.map((ind, index) => {
+                const isAchieved = gradeData.achievements[ind.id] === true;
+                const isNotAchieved = gradeData.achievements[ind.id] === false;
+
+                return `
+                    <tr class="hover:bg-slate-50/80 border-b border-slate-200">
+                        <td class="p-3 text-center font-bold text-slate-500">${index + 1}</td>
+                        <td class="p-3 font-semibold text-slate-800">${ind.text}</td>
+                        <td class="p-3 text-center bg-emerald-50/40 border-l border-r border-slate-200">
+                            <label class="inline-flex items-center justify-center p-2 rounded-xl cursor-pointer hover:bg-emerald-100/50 w-full transition">
+                                <input type="radio" name="achieve_${ind.id}" value="true" ${isAchieved ? 'checked' : ''} class="w-5 h-5 text-emerald-600 focus:ring-emerald-500 rounded border-slate-300">
+                                <span class="ml-2 font-bold text-xs text-emerald-700">Tercapai</span>
+                            </label>
+                        </td>
+                        <td class="p-3 text-center bg-rose-50/40">
+                            <label class="inline-flex items-center justify-center p-2 rounded-xl cursor-pointer hover:bg-rose-100/50 w-full transition">
+                                <input type="radio" name="achieve_${ind.id}" value="false" ${isNotAchieved ? 'checked' : ''} class="w-5 h-5 text-rose-600 focus:ring-rose-500 rounded border-slate-300">
+                                <span class="ml-2 font-bold text-xs text-rose-700">Belum</span>
+                            </label>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function saveStudentGrade() {
+            const studentId = document.getElementById('grade-select-student').value;
+            const subjectId = document.getElementById('grade-select-subject').value;
+            const score = document.getElementById('input-numeric-grade').value;
+
+            if (!studentId || !subjectId) {
+                showAlert('Peringatan', 'Silakan pilih siswa dan mata pelajaran!');
+                return;
+            }
+
+            const subjectIndicators = db.indicators.filter(i => i.subjectId === subjectId);
+            const achievements = {};
+
+            subjectIndicators.forEach(ind => {
+                const radios = document.getElementsByName(`achieve_${ind.id}`);
+                radios.forEach(r => {
+                    if (r.checked) {
+                        achievements[ind.id] = (r.value === 'true');
+                    }
+                });
+            });
+
+            const key = `${studentId}_${subjectId}`;
+            const gradeRecord = {
+                score: score !== '' ? parseInt(score) : 0,
+                achievements: achievements
+            };
+            db.grades[key] = gradeRecord;
+
+            if (supabaseClient) {
+                await supabaseClient.from('grades').upsert({
+                    id: key,
+                    student_id: studentId,
+                    subject_id: subjectId,
+                    score: gradeRecord.score,
+                    achievements: gradeRecord.achievements
+                });
+            }
+            saveLocalFallback();
+
+            showToast('Nilai dan Ketercapaian Indikator berhasil disimpan!', 'success');
+        }
+
+        function populateRaporSelects() {
+            const classSelect = document.getElementById('rapor-filter-class');
+            const currentSelectedClass = classSelect.value;
+            
+            classSelect.innerHTML = db.classes.length === 0 ? '<option value="">(Belum ada kelas)</option>' : db.classes.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            
+            if (currentSelectedClass && db.classes.some(c => c.id === currentSelectedClass)) {
+                classSelect.value = currentSelectedClass;
+            }
+
+            updateRaporStudentSelect();
+        }
+
+        function updateRaporStudentSelect() {
+            const classId = document.getElementById('rapor-filter-class').value;
+            const studentSelect = document.getElementById('rapor-filter-student');
+            const currentSelectedStudent = studentSelect.value;
+
+            const classStudents = db.students.filter(st => st.classId === classId);
+            studentSelect.innerHTML = classStudents.length === 0 ? '<option value="">(Belum ada siswa)</option>' : classStudents.map(st => `<option value="${st.id}">${st.name} (${st.nis})</option>`).join('');
+
+            if (currentSelectedStudent && classStudents.some(st => st.id === currentSelectedStudent)) {
+                studentSelect.value = currentSelectedStudent;
+            }
+
+            generateRaporPreview();
+        }
+
+        function generateRaporPreview() {
+            const studentId = document.getElementById('rapor-filter-student').value;
+            const container = document.getElementById('rapor-printable-area');
+
+            if (!studentId) {
+                container.innerHTML = '<p class="text-center text-slate-400 py-12">Silakan pilih siswa untuk melihat Rapor.</p>';
+                return;
+            }
+
+            const student = db.students.find(st => st.id === studentId);
+            const studentClass = db.classes.find(c => c.id === student?.classId);
+
+            function getPredicate(score) {
+                if (score >= 90) return 'A (Sangat Baik)';
+                if (score >= 80) return 'B (Baik)';
+                if (score >= 70) return 'C (Cukup)';
+                return 'D (Perlu Bimbingan)';
+            }
+
+            let subjectsHtml = db.subjects.length === 0 ? '<p class="text-slate-400 italic text-center py-4">Belum ada mata pelajaran terdaftar.</p>' : db.subjects.map((sub, sIdx) => {
+                const gradeKey = `${studentId}_${sub.id}`;
+                const grade = db.grades[gradeKey] || { score: '-', achievements: {} };
+                const subIndicators = db.indicators.filter(i => i.subjectId === sub.id);
+
+                let indicatorsChecklist = subIndicators.map(ind => {
+                    const status = grade.achievements[ind.id];
+                    const isDone = status === true;
+                    return `
+                        <tr class="border-b border-slate-100">
+                            <td class="p-1 text-slate-700">${ind.text}</td>
+                            <td class="p-1 text-center w-20 font-bold ${isDone ? 'text-emerald-700 bg-emerald-50' : 'text-slate-400'}">
+                                ${isDone ? '✓ Tercapai' : 'Belum'}
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+                if (!indicatorsChecklist) {
+                    indicatorsChecklist = '<tr><td colspan="2" class="p-1 text-slate-400 italic">Belum ada indikator</td></tr>';
+                }
+
+                return `
+                    <div class="mb-2 border border-slate-300 rounded-lg overflow-hidden shadow-sm">
+                        <div class="bg-slate-800 text-white px-2.5 py-1.5 font-bold flex justify-between items-center text-[11px]">
+                            <span>${sIdx + 1}. ${sub.name} <span class="font-normal text-slate-300">(${sub.teacher || '-'})</span></span>
+                            <span>Nilai: ${grade.score} | Predikat: ${typeof grade.score === 'number' ? getPredicate(grade.score) : '-'}</span>
+                        </div>
+                        <table class="w-full text-left text-[11px]">
+                            <thead class="bg-slate-100 text-slate-700 font-bold">
+                                <tr>
+                                    <th class="p-1 border-b">Indikator Evaluasi Capaian</th>
+                                    <th class="p-1 border-b text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${indicatorsChecklist}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="flex-grow">
+                    <!-- Kop Sekolah Resmi (Center Format) -->
+                    <div class="border-b-2 border-slate-900 pb-2 mb-3 text-center">
+                        <h4 class="text-[11px] font-bold text-slate-700 tracking-wide uppercase">YAYASAN GRAHA MUSLIM CENDEKIA</h4>
+                        <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">SEKOLAH MENENGAH PERTAMA</h3>
+                        <h2 class="text-sm font-black text-slate-900 uppercase tracking-wide mt-0.5">SMP HAMALATUL QURAN RINGINAGUNG</h2>
+                        <div class="flex justify-center items-center gap-2 text-[10px] font-bold text-slate-700 mt-0.5">
+                            <span>NPSN : 70028481</span>
+                            <span>•</span>
+                            <span>AKREDITASI A</span>
+                        </div>
+                        <p class="text-[10px] text-slate-600 mt-0.5">Jalan Raya Pare Kandangan Nomor 5 Dsn. Ringinagung Ds. Keling<br>Kecamatan Kepung Kabupaten Kediri Kode Pos 64293</p>
+                        <p class="text-[10px] text-slate-600 mt-0.5">HP : 0857-5705-6130 &nbsp;|&nbsp; Email : smphamalatulquranringinagung@gmail.com</p>
+                    </div>
+
+                    <!-- Bio Siswa -->
+                    <div class="grid grid-cols-2 gap-2 mb-2 text-[11px] bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                        <div>
+                            <p><strong class="text-slate-700">Nama Siswa:</strong> ${student ? student.name : '-'}</p>
+                            <p><strong class="text-slate-700">NIS:</strong> ${student ? student.nis : '-'}</p>
+                        </div>
+                        <div>
+                            <p><strong class="text-slate-700">Kelas:</strong> ${studentClass ? studentClass.name : '-'}</p>
+                            <p><strong class="text-slate-700">Wali Kelas:</strong> ${studentClass ? studentClass.teacher : '-'}</p>
+                        </div>
+                    </div>
+
+                    <!-- List Subjects & Achievements -->
+                    <div class="space-y-1.5">
+                        <h3 class="font-bold text-slate-900 border-b border-slate-300 pb-0.5 text-[11px] uppercase tracking-wider">
+                            Hasil Evaluasi Capaian Pembelajaran
+                        </h3>
+                        ${subjectsHtml}
+                    </div>
+                </div>
+
+                <!-- Tanda Tangan -->
+<div class="mt-[2cm] grid grid-cols-2 gap-8 text-center text-[11px] pt-1 border-t border-slate-200 shrink-0">
+    <div>
+        <p class="mb-4 font-medium text-slate-700">Mengetahui,<br>Kepala Sekolah</p>
+        <p class="font-bold underline">................................</p>
+    </div>
+    <div>
+        <p class="mb-4 font-medium text-slate-700">Penanggung Jawab Program</p>
+        <p class="font-bold underline">................................</p>
+    </div>
+</div>
+            `;
+        }
+
+        function downloadPDFRapor() {
+            const element = document.getElementById('rapor-printable-area');
+            const studentId = document.getElementById('rapor-filter-student').value;
+            const student = db.students.find(st => st.id === studentId);
+            const fileName = `E-Rapor_GEMBIRA_${student ? student.name.replace(/\s+/g, '_') : 'Siswa'}.pdf`;
+
+            const opt = {
+                margin:       [0, 2, 2, 2],
+                filename:     fileName,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, y: 0 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>
