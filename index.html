@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIM Kesiswaan Profesional - Supabase Realtime</title>
+    <title>SIM Kesiswaan Profesional SMP HQR</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for Icons -->
@@ -40,8 +40,8 @@
                         <i class="fa-solid fa-graduation-cap"></i>
                     </div>
                     <div>
-                        <h2 class="text-white font-black text-sm tracking-wide uppercase">SIM KESISWAAN</h2>
-                        <span class="text-[10px] text-emerald-300 font-extrabold tracking-widest uppercase">Waka Portal</span>
+                        <h2 class="text-white font-black text-sm tracking-wide uppercase">SIM KESISWAAN SMP HQR</h2>
+                        <span class="text-[10px] text-emerald-300 font-extrabold tracking-widest uppercase">Wakasis Portal</span>
                     </div>
                 </div>
                 <button onclick="toggleSidebar()" class="md:hidden text-slate-300 hover:text-white p-1">
@@ -56,7 +56,7 @@
                     <i class="fa-solid fa-chart-pie w-5 text-sm"></i><span>Dashboard</span>
                 </a>
                 <a href="#pelanggaran" onclick="switchTab('pelanggaran')" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl font-black text-xs transition-all text-slate-800 hover:bg-emerald-100 hover:text-emerald-900">
-                    <i class="fa-solid fa-triangle-exclamation w-5 text-sm"></i><span>Pelanggaran & Poin</span>
+                    <i class="fa-solid fa-triangle-exclamation w-5 text-sm"></i><span>Pelanggaran</span>
                 </a>
                 <a href="#prestasi" onclick="switchTab('prestasi')" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl font-black text-xs transition-all text-slate-800 hover:bg-emerald-100 hover:text-emerald-900">
                     <i class="fa-solid fa-trophy w-5 text-sm"></i><span>Prestasi Siswa</span>
@@ -71,7 +71,7 @@
                     <i class="fa-solid fa-school w-5 text-sm"></i><span>Data Kelas</span>
                 </a>
                 <a href="#guru" onclick="switchTab('guru')" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl font-black text-xs transition-all text-slate-800 hover:bg-emerald-100 hover:text-emerald-900">
-                    <i class="fa-solid fa-chalkboard-user w-5 text-sm"></i><span>Data Guru & Pelapor</span>
+                    <i class="fa-solid fa-chalkboard-user w-5 text-sm"></i><span>Data Guru </span>
                 </a>
                 <a href="#kegiatan" onclick="switchTab('kegiatan')" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl font-black text-xs transition-all text-slate-800 hover:bg-emerald-100 hover:text-emerald-900">
                     <i class="fa-solid fa-calendar-days w-5 text-sm"></i><span>Kegiatan Kesiswaan</span>
@@ -90,12 +90,6 @@
                 <a href="#pengaturan" onclick="switchTab('pengaturan')" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl font-black text-xs transition-all text-slate-800 hover:bg-emerald-100 hover:text-emerald-900">
                     <i class="fa-solid fa-gears w-5 text-sm"></i><span>Pengaturan & Sistem</span>
                 </a>
-            </div>
-
-            <!-- Sidebar Footer -->
-            <div class="p-4 bg-slate-200 border-t-2 border-slate-300">
-                <div class="text-[11px] font-black text-slate-900 truncate">Waka Kesiswaan Portal</div>
-                <div class="text-[10px] font-black text-emerald-800 flex items-center"><span class="w-2 h-2 bg-emerald-600 rounded-full inline-block mr-1.5 animate-pulse"></span>Supabase Sync</div>
             </div>
         </aside>
 
@@ -175,18 +169,18 @@
 
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="bg-white border-2 border-slate-300 p-5 sm:p-6 rounded-2xl shadow-md lg:col-span-2">
-                            <h3 class="text-sm font-black text-slate-950 mb-4 flex items-center"><i class="fa-solid fa-chart-column mr-2 text-emerald-700"></i>Statistik Rekapitulasi Kesiswaan</h3>
+                            <h3 class="text-sm font-black text-slate-950 mb-4 flex items-center"><i class="fa-solid fa-chart-column mr-2 text-emerald-700"></i>Data Statistik Rekapitulasi Kesiswaan</h3>
                             <div class="h-64 sm:h-72"><canvas id="dashboardChart"></canvas></div>
                         </div>
                         <div class="bg-white border-2 border-slate-300 p-5 sm:p-6 rounded-2xl shadow-md">
-                            <h3 class="text-sm font-black text-slate-950 mb-4 flex items-center"><i class="fa-solid fa-chart-column mr-2 text-emerald-700"></i>Distribusi Siswa per Kelas (Tertinggi ke Rendah)</h3>
+                            <h3 class="text-sm font-black text-slate-950 mb-4 flex items-center"><i class="fa-solid fa-chart-column mr-2 text-emerald-700"></i>Data Statistik Siswa per Kelas </h3>
                             <div class="h-64 sm:h-72"><canvas id="classChart"></canvas></div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="bg-white border-2 border-slate-300 p-5 sm:p-6 rounded-2xl shadow-md space-y-4">
-                            <h3 class="text-sm font-black text-amber-800 flex items-center"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Perlu Perhatian (Poin Tinggi)</h3>
+                            <h3 class="text-sm font-black text-amber-800 flex items-center"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Perlu Perhatian</h3>
                             <div id="dashboard-high-risk-list" class="space-y-3"></div>
                         </div>
                         <div class="bg-white border-2 border-slate-300 p-5 sm:p-6 rounded-2xl shadow-md space-y-4">
@@ -2133,10 +2127,7 @@ ON CONFLICT (id) DO NOTHING;
                     <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
                         <img src="${siswa.foto}" onerror="this.src='https://placehold.co/150x150/10b981/ffffff?text=S'" class="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl object-cover shadow-md border-2 border-emerald-600 flex-shrink-0">
                         <div class="flex-1 text-center md:text-left min-w-0">
-                            <div class="flex flex-col md:flex-row md:items-center justify-between">
-                                <h2 class="text-xl sm:text-2xl font-black text-slate-950 whitespace-normal break-words">${siswa.nama}</h2>
-                                <span class="px-3 py-1 bg-red-100 border-2 border-red-400 text-red-900 font-black text-xs rounded-xl mt-2 md:mt-0 inline-block">${totalPoin} Total Poin Pelanggaran</span>
-                            </div>
+                            
                             <p class="text-xs font-black text-slate-600 mt-1 font-mono">NIS: ${siswa.nis} | Kelas: <strong class="text-slate-950">${siswa.kelas}</strong></p>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4 text-xs font-black text-slate-900">
                                 <div><i class="fa-solid fa-venus-mars mr-2 text-emerald-700"></i>Jenis Kelamin: ${siswa.jk === 'L' ? 'Laki-laki' : 'Perempuan'}</div>
