@@ -767,9 +767,11 @@ ON CONFLICT (id) DO NOTHING;
                         <label class="block text-xs font-black text-slate-900 mb-1">Tingkat</label>
                         <select id="prestasi-tingkat" class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900">
                             <option value="Sekolah">Sekolah / Madrasah</option>
+                            <option value="Sekolah">Kecamatan</option>
                             <option value="Kabupaten/Kota">Kabupaten / Kota</option>
                             <option value="Provinsi">Provinsi</option>
                             <option value="Nasional">Nasional</option>
+                            <option value="Sekolah">Diselenggarakan Sekolah / Madrasah</option>
                         </select>
                     </div>
                     <div>
