@@ -59,7 +59,7 @@
                     <i class="fa-solid fa-triangle-exclamation w-5 text-sm"></i><span>Pelanggaran & Poin</span>
                 </a>
                 <a href="#prestasi" onclick="switchTab('prestasi')" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl font-black text-xs transition-all text-slate-800 hover:bg-emerald-100 hover:text-emerald-900">
-                    <i class="fa-solid fa-trophy w-5 text-sm"></i><span>Prestasi Siswa</span>
+                    <i class="fa-solid fa-trophy w-5 text-sm"></i><span>Prestasi Siswa & Alumni</span>
                 </a>
                 <a href="#pembinaan" onclick="switchTab('pembinaan')" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl font-black text-xs transition-all text-slate-800 hover:bg-emerald-100 hover:text-emerald-900">
                     <i class="fa-solid fa-handshake-angle w-5 text-sm"></i><span>Pembinaan Siswa</span>
@@ -130,6 +130,7 @@
 
             <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-100 space-y-6 custom-scrollbar">
 
+                <!-- DASHBOARD TAB -->
                 <div id="tab-dashboard" class="tab-content space-y-6">
                     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
                         <div onclick="switchTab('siswa')" class="bg-emerald-950 border-2 border-emerald-800 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between cursor-pointer hover:bg-emerald-900 transition-all transform hover:scale-[1.02]">
@@ -203,11 +204,12 @@
                     </div>
                 </div>
 
+                <!-- SISWA TAB -->
                 <div id="tab-siswa" class="tab-content hidden space-y-6">
                     <div class="bg-white border-2 border-slate-300 rounded-2xl p-5 sm:p-6 shadow-md flex flex-col md:flex-row justify-between items-center gap-4">
                         <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
                             <div class="w-full sm:w-64">
-                                <input type="text" id="siswa-search" oninput="renderSiswaTable()" placeholder="Cari nama / NIS..." class="w-full px-4 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                                <input type="text" id="siswa-search" oninput="renderSiswaTable()" placeholder="Cari nama / NIS / asal kota..." class="w-full px-4 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600">
                             </div>
                             <select id="siswa-filter-kelas" onchange="renderSiswaTable()" class="w-full sm:w-auto px-4 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900">
                                 <option value="">Semua Kelas</option>
@@ -242,6 +244,7 @@
                     </div>
                 </div>
 
+                <!-- ALUMNI TAB -->
                 <div id="tab-alumni" class="tab-content hidden space-y-6">
                     <div class="bg-white border-2 border-slate-300 rounded-2xl p-5 sm:p-6 shadow-md flex flex-col md:flex-row justify-between items-center gap-4">
                         <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
@@ -280,6 +283,7 @@
                     </div>
                 </div>
 
+                <!-- KELAS TAB -->
                 <div id="tab-kelas" class="tab-content hidden space-y-6">
                     <div class="bg-white border-2 border-slate-300 rounded-2xl p-5 sm:p-6 shadow-md flex flex-col md:flex-row justify-between items-center gap-4">
                         <div>
@@ -309,6 +313,7 @@
                     </div>
                 </div>
 
+                <!-- GURU TAB -->
                 <div id="tab-guru" class="tab-content hidden space-y-6">
                     <div class="bg-white border-2 border-slate-300 rounded-2xl p-5 sm:p-6 shadow-md flex flex-col md:flex-row justify-between items-center gap-4">
                         <div>
@@ -337,11 +342,12 @@
                     </div>
                 </div>
 
+                <!-- PELANGGARAN TAB -->
                 <div id="tab-pelanggaran" class="tab-content hidden space-y-6">
                     <div class="bg-white border-2 border-slate-300 rounded-2xl p-5 sm:p-6 shadow-md flex flex-col md:flex-row justify-between items-center gap-4">
                         <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
                             <div class="w-full sm:w-72">
-                                <input type="text" id="pelanggaran-search" oninput="renderPelanggaranTable()" placeholder="Cari pelanggaran / siswa..." class="w-full px-4 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                                <input type="text" id="pelanggaran-search" oninput="renderPelanggaranTable()" placeholder="Cari pelanggaran / subjek..." class="w-full px-4 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600">
                             </div>
                             <select id="pelanggaran-filter-status" onchange="renderPelanggaranTable()" class="w-full sm:w-auto px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900">
                                 <option value="">Semua Status</option>
@@ -351,7 +357,7 @@
                             </select>
                         </div>
                         <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                            <button onclick="downloadPDF('Data Pelanggaran Siswa', 'pelanggaran-table-body', ['Tanggal', 'Siswa', 'Kelas', 'Jenis Pelanggaran', 'Kategori', 'Poin', 'Tindakan', 'Pelapor', 'Hasil Tindakan', 'Status'])" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-900 font-black rounded-xl text-xs border-2 border-slate-400 flex items-center justify-center space-x-1.5"><i class="fa-solid fa-download text-emerald-700"></i><span>Download Pelanggaran (PDF)</span></button>
+                            <button onclick="downloadPDF('Data Pelanggaran Siswa & Alumni', 'pelanggaran-table-body', ['Tanggal', 'Subjek (Siswa/Alumni)', 'Kelas / Tahun', 'Jenis Pelanggaran', 'Kategori', 'Poin', 'Tindakan', 'Pelapor', 'Hasil Tindakan', 'Status'])" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-900 font-black rounded-xl text-xs border-2 border-slate-400 flex items-center justify-center space-x-1.5"><i class="fa-solid fa-download text-emerald-700"></i><span>Download Pelanggaran (PDF)</span></button>
                             <button onclick="openPelanggaranModal()" class="px-5 py-2.5 bg-amber-700 hover:bg-amber-600 text-white font-black rounded-xl text-xs shadow-md transition-all flex items-center justify-center space-x-2">
                                 <i class="fa-solid fa-plus"></i><span>Catat Pelanggaran</span>
                             </button>
@@ -364,8 +370,8 @@
                                 <thead class="sticky-header bg-slate-950 text-[11px] uppercase font-black text-amber-300 border-b-2 border-slate-800 tracking-wider">
                                     <tr>
                                         <th class="p-4 bg-slate-950">Tanggal</th>
-                                        <th class="p-4 bg-slate-950">Siswa</th>
-                                        <th class="p-4 bg-slate-950">Kelas</th>
+                                        <th class="p-4 bg-slate-950">Subjek (Siswa / Alumni)</th>
+                                        <th class="p-4 bg-slate-950">Kelas / Tahun Lulus</th>
                                         <th class="p-4 bg-slate-950">Jenis Pelanggaran</th>
                                         <th class="p-4 bg-slate-950">Kategori</th>
                                         <th class="p-4 bg-slate-950">Poin</th>
@@ -382,13 +388,14 @@
                     </div>
                 </div>
 
+                <!-- PRESTASI TAB -->
                 <div id="tab-prestasi" class="tab-content hidden space-y-6">
                     <div class="bg-white border-2 border-slate-300 rounded-2xl p-5 sm:p-6 shadow-md flex flex-col md:flex-row justify-between items-center gap-4">
                         <div class="w-full md:w-72">
-                            <input type="text" id="prestasi-search" oninput="renderPrestasiTable()" placeholder="Cari prestasi / siswa..." class="w-full px-4 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                            <input type="text" id="prestasi-search" oninput="renderPrestasiTable()" placeholder="Cari prestasi / subjek..." class="w-full px-4 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600">
                         </div>
                         <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                            <button onclick="downloadPDF('Data Prestasi Siswa', 'prestasi-table-body', ['Tanggal', 'Siswa', 'Kelas', 'Nama Prestasi', 'Bidang', 'Tingkat', 'Juara', 'Penyelenggara'])" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-900 font-black rounded-xl text-xs border-2 border-slate-400 flex items-center justify-center space-x-1.5"><i class="fa-solid fa-download text-emerald-700"></i><span>Download Prestasi (PDF)</span></button>
+                            <button onclick="downloadPDF('Data Prestasi Siswa & Alumni', 'prestasi-table-body', ['Tanggal', 'Subjek (Siswa/Alumni)', 'Kelas / Tahun', 'Nama Prestasi', 'Bidang', 'Tingkat', 'Juara', 'Penyelenggara'])" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-900 font-black rounded-xl text-xs border-2 border-slate-400 flex items-center justify-center space-x-1.5"><i class="fa-solid fa-download text-emerald-700"></i><span>Download Prestasi (PDF)</span></button>
                             <button onclick="openPrestasiModal()" class="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white font-black rounded-xl text-xs shadow-md transition-all flex items-center justify-center space-x-2">
                                 <i class="fa-solid fa-trophy"></i><span>Catat Prestasi Baru</span>
                             </button>
@@ -401,8 +408,8 @@
                                 <thead class="sticky-header bg-slate-950 text-[11px] uppercase font-black text-emerald-400 border-b-2 border-slate-800 tracking-wider">
                                     <tr>
                                         <th class="p-4 bg-slate-950">Tanggal</th>
-                                        <th class="p-4 bg-slate-950">Siswa</th>
-                                        <th class="p-4 bg-slate-950">Kelas</th>
+                                        <th class="p-4 bg-slate-950">Subjek (Siswa / Alumni)</th>
+                                        <th class="p-4 bg-slate-950">Kelas / Tahun Lulus</th>
                                         <th class="p-4 bg-slate-950">Nama Prestasi</th>
                                         <th class="p-4 bg-slate-950">Bidang</th>
                                         <th class="p-4 bg-slate-950">Tingkat</th>
@@ -417,6 +424,7 @@
                     </div>
                 </div>
 
+                <!-- PEMBINAAN TAB -->
                 <div id="tab-pembinaan" class="tab-content hidden space-y-6">
                     <div class="bg-white border-2 border-slate-300 rounded-2xl p-5 sm:p-6 shadow-md flex flex-col md:flex-row justify-between items-center gap-4">
                         <div class="w-full md:w-72">
@@ -451,6 +459,7 @@
                     </div>
                 </div>
 
+                <!-- KEGIATAN TAB -->
                 <div id="tab-kegiatan" class="tab-content hidden space-y-6">
                     <div class="bg-white border-2 border-slate-300 rounded-2xl p-5 sm:p-6 shadow-md flex flex-col md:flex-row justify-between items-center gap-4">
                         <div class="w-full md:w-72">
@@ -484,6 +493,7 @@
                     </div>
                 </div>
 
+                <!-- PERIZINAN TAB -->
                 <div id="tab-perizinan" class="tab-content hidden space-y-6">
                     <div class="bg-white border-2 border-slate-300 rounded-2xl p-5 sm:p-6 shadow-md flex flex-col md:flex-row justify-between items-center gap-4">
                         <div class="w-full md:w-72">
@@ -519,6 +529,7 @@
                     </div>
                 </div>
 
+                <!-- TATA TERTIB TAB -->
                 <div id="tab-tatatertib" class="tab-content hidden space-y-6">
                     <div class="bg-white border-2 border-slate-300 rounded-2xl p-6 shadow-md space-y-4">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b-2 border-slate-300 pb-4">
@@ -539,6 +550,7 @@
                     </div>
                 </div>
 
+                <!-- LAPORAN TAB -->
                 <div id="tab-laporan" class="tab-content hidden space-y-6">
                     <div class="bg-white border-2 border-slate-300 rounded-2xl p-5 sm:p-6 shadow-md space-y-4 no-print">
                         <h3 class="text-sm font-black text-slate-950 flex items-center"><i class="fa-solid fa-filter mr-2 text-emerald-700"></i>Filter & Kategori Laporan</h3>
@@ -582,6 +594,7 @@
                     </div>
                 </div>
 
+                <!-- PENGATURAN TAB -->
                 <div id="tab-pengaturan" class="tab-content hidden space-y-6">
                     <div class="bg-white border-2 border-slate-300 p-5 sm:p-6 rounded-2xl shadow-md space-y-6">
                         <h3 class="text-sm font-black text-slate-950 flex items-center"><i class="fa-solid fa-circle-info mr-2 text-emerald-700"></i>Informasi & Pengaturan Sistem Kesiswaan</h3>
@@ -634,6 +647,7 @@ ON CONFLICT (id) DO NOTHING;
                     </div>
                 </div>
 
+                <!-- PROFIL SISWA TAB -->
                 <div id="tab-profil-siswa" class="tab-content hidden space-y-6">
                     <div class="flex items-center justify-between no-print">
                         <button onclick="switchTab('siswa')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 font-black rounded-xl text-xs flex items-center space-x-2 border-2 border-slate-400">
@@ -758,14 +772,23 @@ ON CONFLICT (id) DO NOTHING;
     <div id="modal-pelanggaran" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
         <div class="bg-white border-2 border-slate-400 rounded-3xl max-w-xl w-full p-5 sm:p-8 shadow-2xl my-8">
             <div class="flex justify-between items-center mb-6 border-b-2 border-slate-300 pb-4">
-                <h3 id="modal-pelanggaran-title" class="text-base sm:text-lg font-black text-slate-950">Catat Pelanggaran Siswa</h3>
+                <h3 id="modal-pelanggaran-title" class="text-base sm:text-lg font-black text-slate-950">Catat Pelanggaran Siswa & Alumni</h3>
                 <button onclick="closeModal('modal-pelanggaran')" class="p-2 text-slate-600 hover:text-slate-950 rounded-xl"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form id="form-pelanggaran" onsubmit="savePelanggaran(event)" class="space-y-4">
                 <input type="hidden" id="pelanggaran-id">
-                <div>
-                    <label class="block text-xs font-black text-slate-900 mb-1">Pilih Siswa</label>
-                    <select id="pelanggaran-siswa-id" required class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900"></select>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-black text-slate-900 mb-1">Kategori Subjek</label>
+                        <select id="pelanggaran-tipe-subjek" onchange="togglePelanggaranSubjek(this.value)" class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900">
+                            <option value="siswa">Siswa Aktif</option>
+                            <option value="alumni">Alumni</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label id="label-pilih-subjek" class="block text-xs font-black text-slate-900 mb-1">Pilih Siswa</label>
+                        <select id="pelanggaran-siswa-id" required class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900"></select>
+                    </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -829,13 +852,22 @@ ON CONFLICT (id) DO NOTHING;
     <div id="modal-prestasi" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto">
         <div class="bg-white border-2 border-slate-400 rounded-3xl max-w-xl w-full p-5 sm:p-8 shadow-2xl my-8">
             <div class="flex justify-between items-center mb-6 border-b-2 border-slate-300 pb-4">
-                <h3 class="text-base sm:text-lg font-black text-slate-950">Catat Prestasi Siswa</h3>
+                <h3 class="text-base sm:text-lg font-black text-slate-950">Catat Prestasi Siswa & Alumni</h3>
                 <button onclick="closeModal('modal-prestasi')" class="p-2 text-slate-600 hover:text-slate-950 rounded-xl"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form id="form-prestasi" onsubmit="savePrestasi(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-black text-slate-900 mb-1">Pilih Siswa</label>
-                    <select id="prestasi-siswa-id" required class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900"></select>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-black text-slate-900 mb-1">Kategori Subjek</label>
+                        <select id="prestasi-tipe-subjek" onchange="togglePrestasiSubjek(this.value)" class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900">
+                            <option value="siswa">Siswa Aktif</option>
+                            <option value="alumni">Alumni</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label id="label-prestasi-subjek" class="block text-xs font-black text-slate-900 mb-1">Pilih Siswa</label>
+                        <select id="prestasi-siswa-id" required class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900"></select>
+                    </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -1124,14 +1156,14 @@ ON CONFLICT (id) DO NOTHING;
                 { id: 4, nis: "232407001", nama: "Ahmad Fauzan Al-Ghifari", kelas: "VII A", jk: "L", ttl: "Malang, 12 Januari 2013", ortu: "H. Abdullah", hp: "081234567890", alamat: "Jl. Pesantren No. 1, Malang", foto: "https://placehold.co/150x150/10b981/ffffff?text=AF" }
             ],
             alumni: [
-                { id: 1, nama: "Aisyah Humairah", tahun: "2024", sekolah: "SMAN 1 Kediri", hp: "081122334455", pekerjaan: "Pelajar / Mahasiswa", alamat: "Jl. Melati No. 4, Kediri", foto: "https://placehold.co/150x150/10b981/ffffff?text=AH" },
-                { id: 2, nama: "Zubair bin Awwam", tahun: "2023", sekolah: "MAN 2 Kediri", hp: "082233445566", pekerjaan: "Wirausaha", alamat: "Jl. Mawar No. 10, Madiun", foto: "https://placehold.co/150x150/10b981/ffffff?text=ZA" }
+                { id: 101, nama: "Aisyah Humairah", tahun: "2024", sekolah: "SMAN 1 Kediri", hp: "081122334455", pekerjaan: "Pelajar / Mahasiswa", alamat: "Jl. Melati No. 4, Kediri", foto: "https://placehold.co/150x150/10b981/ffffff?text=AH" },
+                { id: 102, nama: "Zubair bin Awwam", tahun: "2023", sekolah: "MAN 2 Kediri", hp: "082233445566", pekerjaan: "Wirausaha", alamat: "Jl. Mawar No. 10, Madiun", foto: "https://placehold.co/150x150/10b981/ffffff?text=ZA" }
             ],
             pelanggaran: [
-                { id: 1, siswaId: 3, tanggal: "2026-02-10", nama: "Terlambat Hadir di Sekolah", kategori: "Ringan", poin: 5, kronologi: "Terlambat datang apel pagi", pelapor: "Guru Piket", tindakan: "Teguran lisan & nasehat", hasilTindakan: "Sudah membuat surat pernyataan", status: "Selesai" }
+                { id: 1, siswaId: 3, tipe: 'siswa', tanggal: "2026-02-10", nama: "Terlambat Hadir di Sekolah", kategori: "Ringan", poin: 5, kronologi: "Terlambat datang apel pagi", pelapor: "Guru Piket", tindakan: "Teguran lisan & nasehat", hasilTindakan: "Sudah membuat surat pernyataan", status: "Selesai" }
             ],
             prestasi: [
-                { id: 1, siswaId: 1, tanggal: "2026-01-20", bidang: "Keagamaan", nama: "Juara 1 Musabaqah Hifdzil Qur'an", tingkat: "Kabupaten/Kota", juara: "Juara 1", penyelenggara: "Kemenag", dokumentasi: "https://placehold.co/300x200/10b981/ffffff?text=MHQ" }
+                { id: 1, siswaId: 1, tipe: 'siswa', tanggal: "2026-01-20", bidang: "Keagamaan", nama: "Juara 1 Musabaqah Hifdzil Qur'an", tingkat: "Kabupaten/Kota", juara: "Juara 1", penyelenggara: "Kemenag", dokumentasi: "https://placehold.co/300x200/10b981/ffffff?text=MHQ" }
             ],
             pembinaan: [],
             kegiatan: [
@@ -1299,8 +1331,8 @@ ON CONFLICT (id) DO NOTHING;
                 alumni: 'Pengelolaan Data Alumni',
                 kelas: 'Ruang Master Data Kelas',
                 guru: 'Ruang Master Data Guru / Pelapor',
-                pelanggaran: 'Catatan Pelanggaran & Poin Siswa',
-                prestasi: 'Prestasi Siswa',
+                pelanggaran: 'Catatan Pelanggaran & Poin Siswa & Alumni',
+                prestasi: 'Prestasi Siswa & Alumni',
                 pembinaan: 'Proses Pembinaan Siswa',
                 kegiatan: 'Kegiatan Kesiswaan',
                 perizinan: 'Perizinan Keluar Siswa',
@@ -1378,20 +1410,47 @@ ON CONFLICT (id) DO NOTHING;
             const filterTahunOpts = `<option value="">Semua Tahun Lulus</option>` + uniqueYears.map(y => `<option value="${y}">${y}</option>`).join('');
             if(document.getElementById('alumni-filter-tahun')) document.getElementById('alumni-filter-tahun').innerHTML = filterTahunOpts;
 
+            togglePelanggaranSubjek(document.getElementById('pelanggaran-tipe-subjek')?.value || 'siswa');
+            togglePrestasiSubjek(document.getElementById('prestasi-tipe-subjek')?.value || 'siswa');
+
             const siswaOpts = `<option value="">Pilih Siswa</option>` + appData.siswa.map(s => `<option value="${s.id}">${s.nama} (${s.kelas} - ${s.nis})</option>`).join('');
-            if(document.getElementById('pelanggaran-siswa-id')) document.getElementById('pelanggaran-siswa-id').innerHTML = siswaOpts;
-            if(document.getElementById('prestasi-siswa-id')) document.getElementById('prestasi-siswa-id').innerHTML = siswaOpts;
-            if(document.getElementById('pembinaan-siswa-id')) document.getElementById('pembinaan-siswa-id').innerHTML = siswaOpts;
             if(document.getElementById('perizinan-siswa-id')) document.getElementById('perizinan-siswa-id').innerHTML = siswaOpts;
+            if(document.getElementById('pembinaan-siswa-id')) document.getElementById('pembinaan-siswa-id').innerHTML = siswaOpts;
 
             const guruOpts = `<option value="">Pilih Guru Pelapor</option>` + appData.guru.map(g => `<option value="${g}">${g}</option>`).join('');
             if(document.getElementById('pelanggaran-pelapor')) document.getElementById('pelanggaran-pelapor').innerHTML = guruOpts;
         }
 
+        function togglePelanggaranSubjek(tipe) {
+            const selectEl = document.getElementById('pelanggaran-siswa-id');
+            const labelEl = document.getElementById('label-pilih-subjek');
+            if (!selectEl) return;
+            if (tipe === 'siswa') {
+                if(labelEl) labelEl.innerText = 'Pilih Siswa Aktif';
+                selectEl.innerHTML = `<option value="">Pilih Siswa</option>` + appData.siswa.map(s => `<option value="${s.id}">${s.nama} (${s.kelas})</option>`).join('');
+            } else {
+                if(labelEl) labelEl.innerText = 'Pilih Alumni';
+                selectEl.innerHTML = `<option value="">Pilih Alumni</option>` + (appData.alumni || []).map(a => `<option value="${a.id}">${a.nama} (Lulus ${a.tahun})</option>`).join('');
+            }
+        }
+
+        function togglePrestasiSubjek(tipe) {
+            const selectEl = document.getElementById('prestasi-siswa-id');
+            const labelEl = document.getElementById('label-prestasi-subjek');
+            if (!selectEl) return;
+            if (tipe === 'siswa') {
+                if(labelEl) labelEl.innerText = 'Pilih Siswa Aktif';
+                selectEl.innerHTML = `<option value="">Pilih Siswa</option>` + appData.siswa.map(s => `<option value="${s.id}">${s.nama} (${s.kelas})</option>`).join('');
+            } else {
+                if(labelEl) labelEl.innerText = 'Pilih Alumni';
+                selectEl.innerHTML = `<option value="">Pilih Alumni</option>` + (appData.alumni || []).map(a => `<option value="${a.id}">${a.nama} (Lulus ${a.tahun})</option>`).join('');
+            }
+        }
+
         function getSiswaTotalPoin(siswaId) {
             let total = 0;
             appData.pelanggaran.forEach(p => {
-                if (parseInt(p.siswaId) === parseInt(siswaId)) {
+                if (p.tipe !== 'alumni' && parseInt(p.siswaId) === parseInt(siswaId)) {
                     total += parseInt(p.poin || 0);
                 }
             });
@@ -1432,14 +1491,24 @@ ON CONFLICT (id) DO NOTHING;
             const recentPrestasi = [...appData.prestasi].sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal)).slice(0, 3);
             if (document.getElementById('dashboard-recent-prestasi')) {
                 document.getElementById('dashboard-recent-prestasi').innerHTML = recentPrestasi.length ? recentPrestasi.map(p => {
-                    const siswa = appData.siswa.find(s => s.id === parseInt(p.siswaId));
+                    let subjekNama = 'Siswa';
+                    let subjekKet = '';
+                    if (p.tipe === 'alumni') {
+                        const alumni = (appData.alumni || []).find(a => a.id === parseInt(p.siswaId));
+                        subjekNama = alumni ? alumni.nama : 'Alumni';
+                        subjekKet = `Alumni (${alumni ? alumni.tahun : ''})`;
+                    } else {
+                        const siswa = appData.siswa.find(s => s.id === parseInt(p.siswaId));
+                        subjekNama = siswa ? siswa.nama : 'Siswa';
+                        subjekKet = siswa ? siswa.kelas : '';
+                    }
                     return `
                         <div class="p-3 bg-slate-50 border-2 border-slate-300 rounded-xl">
                             <div class="flex justify-between items-start">
                                 <h4 class="text-xs font-black text-slate-950 truncate pr-2">${p.nama}</h4>
                                 <span class="text-[10px] bg-emerald-200 border-2 border-emerald-400 text-emerald-950 px-2 py-0.5 rounded font-black flex-shrink-0">${p.juara}</span>
                             </div>
-                            <p class="text-[10px] font-black text-slate-700 mt-1">${siswa ? siswa.nama : 'Siswa'} (${siswa ? siswa.kelas : ''})</p>
+                            <p class="text-[10px] font-black text-slate-700 mt-1">${subjekNama} (${subjekKet})</p>
                         </div>
                     `;
                 }).join('') : '<p class="text-xs text-slate-600 font-black">Belum ada data prestasi.</p>';
@@ -1505,10 +1574,8 @@ ON CONFLICT (id) DO NOTHING;
                     let city = 'Lainnya';
                     const addr = (s.alamat || '').trim();
                     if (addr) {
-                        // Extract last word or comma separated city name
                         const parts = addr.split(',');
                         let rawCity = parts.length > 1 ? parts[parts.length - 1].trim() : parts[0];
-                        // Capitalize nicely
                         city = rawCity.charAt(0).toUpperCase() + rawCity.slice(1).toLowerCase();
                     }
                     cityCounts[city] = (cityCounts[city] || 0) + 1;
@@ -1540,9 +1607,7 @@ ON CONFLICT (id) DO NOTHING;
             const filterKelas = filterKelasInput ? filterKelasInput.value : '';
 
             const filtered = appData.siswa.filter(s => {
-                const matchSearch = s.nama.toLowerCase().includes(search) || 
-                                    s.nis.toLowerCase().includes(search) || 
-                                    (s.alamat && s.alamat.toLowerCase().includes(search));
+                const matchSearch = s.nama.toLowerCase().includes(search) || s.nis.toLowerCase().includes(search) || (s.alamat && s.alamat.toLowerCase().includes(search));
                 const matchKelas = filterKelas ? s.kelas === filterKelas : true;
                 return matchSearch && matchKelas;
             });
@@ -1576,7 +1641,7 @@ ON CONFLICT (id) DO NOTHING;
             const search = searchInput ? searchInput.value.toLowerCase() : '';
             const filterTahun = filterTahunInput ? filterTahunInput.value : '';
 
-            const filtered = appData.alumni.filter(a => {
+            const filtered = (appData.alumni || []).filter(a => {
                 const matchSearch = a.nama.toLowerCase().includes(search) || a.tahun.toLowerCase().includes(search);
                 const matchTahun = filterTahun ? a.tahun === filterTahun : true;
                 return matchSearch && matchTahun;
@@ -1631,7 +1696,7 @@ ON CONFLICT (id) DO NOTHING;
             document.getElementById('alumni-id').value = '';
             document.getElementById('modal-alumni-title').innerText = 'Tambah Data Alumni';
             if (id) {
-                const a = appData.alumni.find(item => item.id === parseInt(id));
+                const a = (appData.alumni || []).find(item => item.id === parseInt(id));
                 if (a) {
                     document.getElementById('modal-alumni-title').innerText = 'Edit Data Alumni';
                     document.getElementById('alumni-id').value = a.id;
@@ -1693,6 +1758,8 @@ ON CONFLICT (id) DO NOTHING;
                 alamat: document.getElementById('alumni-alamat').value
             };
 
+            if (!Array.isArray(appData.alumni)) appData.alumni = [];
+
             if (id) {
                 const index = appData.alumni.findIndex(a => a.id === parseInt(id));
                 if (index !== -1) appData.alumni[index] = data;
@@ -1705,6 +1772,7 @@ ON CONFLICT (id) DO NOTHING;
             await saveToSupabase();
             closeModal('modal-alumni');
             renderAlumniTable();
+            renderDashboard();
             populateDropdowns();
         }
 
@@ -1727,6 +1795,7 @@ ON CONFLICT (id) DO NOTHING;
                 appData.alumni = appData.alumni.filter(a => a.id !== parseInt(id));
                 await saveToSupabase();
                 renderAlumniTable();
+                renderDashboard();
                 populateDropdowns();
                 showNotification('Data alumni berhasil dihapus.', 'info');
             }
@@ -1741,16 +1810,33 @@ ON CONFLICT (id) DO NOTHING;
             if (!tbody) return;
 
             const filtered = appData.pelanggaran.filter(p => {
-                const siswa = appData.siswa.find(s => s.id === parseInt(p.siswaId));
-                const nama = siswa ? siswa.nama.toLowerCase() : '';
+                let subjekNama = '';
+                if (p.tipe === 'alumni') {
+                    const alumni = (appData.alumni || []).find(a => a.id === parseInt(p.siswaId));
+                    subjekNama = alumni ? alumni.nama.toLowerCase() : '';
+                } else {
+                    const siswa = appData.siswa.find(s => s.id === parseInt(p.siswaId));
+                    subjekNama = siswa ? siswa.nama.toLowerCase() : '';
+                }
                 const jenis = p.nama ? p.nama.toLowerCase() : '';
-                const matchSearch = nama.includes(search) || jenis.includes(search) || p.kronologi.toLowerCase().includes(search);
+                const matchSearch = subjekNama.includes(search) || jenis.includes(search) || p.kronologi.toLowerCase().includes(search);
                 const matchStatus = filterStatus ? p.status === filterStatus : true;
                 return matchSearch && matchStatus;
             });
 
             tbody.innerHTML = filtered.length ? filtered.map(p => {
-                const siswa = appData.siswa.find(s => s.id === parseInt(p.siswaId));
+                let subjekNama = 'Subjek';
+                let subjekKet = '-';
+                if (p.tipe === 'alumni') {
+                    const alumni = (appData.alumni || []).find(a => a.id === parseInt(p.siswaId));
+                    subjekNama = alumni ? alumni.nama : 'Alumni';
+                    subjekKet = `Alumni (Lulus ${alumni ? alumni.tahun : ''})`;
+                } else {
+                    const siswa = appData.siswa.find(s => s.id === parseInt(p.siswaId));
+                    subjekNama = siswa ? siswa.nama : 'Siswa';
+                    subjekKet = siswa ? siswa.kelas : '-';
+                }
+
                 let statusBadgeBg = 'bg-blue-100 text-blue-900 border-blue-400';
                 if (p.status === 'Proses') statusBadgeBg = 'bg-amber-100 text-amber-900 border-amber-400';
                 if (p.status === 'Selesai') statusBadgeBg = 'bg-emerald-100 text-emerald-900 border-emerald-400';
@@ -1759,8 +1845,8 @@ ON CONFLICT (id) DO NOTHING;
                 return `
                     <tr class="hover:bg-amber-50 transition-colors">
                         <td class="p-4 text-xs font-mono font-black text-slate-900 whitespace-nowrap">${p.tanggal}</td>
-                        <td class="p-4 font-black text-slate-950 whitespace-nowrap">${siswa ? siswa.nama : 'Siswa'}</td>
-                        <td class="p-4 whitespace-nowrap"><span class="px-2.5 py-1 bg-slate-200 border-2 border-slate-400 text-slate-900 text-xs font-black rounded-lg">${siswa ? siswa.kelas : '-'}</span></td>
+                        <td class="p-4 font-black text-slate-950 whitespace-nowrap">${subjekNama} ${p.tipe === 'alumni' ? '<span class="text-[9px] bg-purple-100 text-purple-900 px-1.5 py-0.5 rounded border border-purple-300 ml-1">Alumni</span>' : ''}</td>
+                        <td class="p-4 whitespace-nowrap"><span class="px-2.5 py-1 bg-slate-200 border-2 border-slate-400 text-slate-900 text-xs font-black rounded-lg">${subjekKet}</span></td>
                         <td class="p-4 text-slate-950 font-black whitespace-nowrap">${p.nama || '-'}</td>
                         <td class="p-4 whitespace-nowrap"><span class="px-2.5 py-1 bg-amber-100 border-2 border-amber-400 text-amber-950 text-xs font-black rounded-lg">${p.kategori || '-'}</span></td>
                         <td class="p-4 font-black text-amber-800 whitespace-nowrap">${p.poin || 0} Poin</td>
@@ -1780,12 +1866,15 @@ ON CONFLICT (id) DO NOTHING;
         function openPelanggaranModal(id = null) {
             document.getElementById('form-pelanggaran').reset();
             document.getElementById('pelanggaran-id').value = '';
-            document.getElementById('modal-pelanggaran-title').innerText = 'Catat Pelanggaran Siswa';
+            document.getElementById('modal-pelanggaran-title').innerText = 'Catat Pelanggaran Siswa & Alumni';
             if (id) {
                 const p = appData.pelanggaran.find(item => item.id === parseInt(id));
                 if (p) {
                     document.getElementById('modal-pelanggaran-title').innerText = 'Edit Catatan Pelanggaran';
                     document.getElementById('pelanggaran-id').value = p.id;
+                    const tipeSubjek = p.tipe || 'siswa';
+                    document.getElementById('pelanggaran-tipe-subjek').value = tipeSubjek;
+                    togglePelanggaranSubjek(tipeSubjek);
                     document.getElementById('pelanggaran-siswa-id').value = p.siswaId;
                     document.getElementById('pelanggaran-tanggal').value = p.tanggal;
                     document.getElementById('pelanggaran-nama-custom').value = p.nama || '';
@@ -1808,6 +1897,7 @@ ON CONFLICT (id) DO NOTHING;
             const id = document.getElementById('pelanggaran-id').value;
             const data = {
                 id: id ? parseInt(id) : Date.now(),
+                tipe: document.getElementById('pelanggaran-tipe-subjek').value,
                 siswaId: parseInt(document.getElementById('pelanggaran-siswa-id').value),
                 tanggal: document.getElementById('pelanggaran-tanggal').value,
                 nama: document.getElementById('pelanggaran-nama-custom').value,
@@ -1852,18 +1942,35 @@ ON CONFLICT (id) DO NOTHING;
             if (!tbody) return;
 
             const filtered = appData.prestasi.filter(p => {
-                const siswa = appData.siswa.find(s => s.id === parseInt(p.siswaId));
-                const namaSiswa = siswa ? siswa.nama.toLowerCase() : '';
-                return namaSiswa.includes(search) || p.nama.toLowerCase().includes(search) || p.bidang.toLowerCase().includes(search);
+                let subjekNama = '';
+                if (p.tipe === 'alumni') {
+                    const alumni = (appData.alumni || []).find(a => a.id === parseInt(p.siswaId));
+                    subjekNama = alumni ? alumni.nama.toLowerCase() : '';
+                } else {
+                    const siswa = appData.siswa.find(s => s.id === parseInt(p.siswaId));
+                    subjekNama = siswa ? siswa.nama.toLowerCase() : '';
+                }
+                return subjekNama.includes(search) || p.nama.toLowerCase().includes(search) || p.bidang.toLowerCase().includes(search);
             });
 
             tbody.innerHTML = filtered.length ? filtered.map(p => {
-                const siswa = appData.siswa.find(s => s.id === parseInt(p.siswaId));
+                let subjekNama = 'Subjek';
+                let subjekKet = '-';
+                if (p.tipe === 'alumni') {
+                    const alumni = (appData.alumni || []).find(a => a.id === parseInt(p.siswaId));
+                    subjekNama = alumni ? alumni.nama : 'Alumni';
+                    subjekKet = `Alumni (Lulus ${alumni ? alumni.tahun : ''})`;
+                } else {
+                    const siswa = appData.siswa.find(s => s.id === parseInt(p.siswaId));
+                    subjekNama = siswa ? siswa.nama : 'Siswa';
+                    subjekKet = siswa ? siswa.kelas : '-';
+                }
+
                 return `
                     <tr class="hover:bg-emerald-50 transition-colors">
                         <td class="p-4 text-xs font-mono font-black text-slate-900 whitespace-nowrap">${p.tanggal}</td>
-                        <td class="p-4 font-black text-slate-950 whitespace-nowrap">${siswa ? siswa.nama : 'Siswa'}</td>
-                        <td class="p-4 whitespace-nowrap"><span class="px-2.5 py-1 bg-slate-200 border-2 border-slate-400 text-slate-900 text-xs font-black rounded-lg">${siswa ? siswa.kelas : '-'}</span></td>
+                        <td class="p-4 font-black text-slate-950 whitespace-nowrap">${subjekNama} ${p.tipe === 'alumni' ? '<span class="text-[9px] bg-purple-100 text-purple-900 px-1.5 py-0.5 rounded border border-purple-300 ml-1">Alumni</span>' : ''}</td>
+                        <td class="p-4 whitespace-nowrap"><span class="px-2.5 py-1 bg-slate-200 border-2 border-slate-400 text-slate-900 text-xs font-black rounded-lg">${subjekKet}</span></td>
                         <td class="p-4 text-slate-950 font-black whitespace-nowrap">${p.nama}</td>
                         <td class="p-4 whitespace-nowrap"><span class="px-2.5 py-0.5 bg-emerald-100 border-2 border-emerald-400 text-emerald-950 rounded font-black">${p.bidang}</span></td>
                         <td class="p-4 text-xs font-black text-slate-900 whitespace-nowrap">${p.tingkat}</td>
@@ -1886,6 +1993,7 @@ ON CONFLICT (id) DO NOTHING;
             e.preventDefault();
             const data = {
                 id: Date.now(),
+                tipe: document.getElementById('prestasi-tipe-subjek').value,
                 siswaId: parseInt(document.getElementById('prestasi-siswa-id').value),
                 tanggal: document.getElementById('prestasi-tanggal').value,
                 bidang: document.getElementById('prestasi-bidang').value,
@@ -2128,6 +2236,7 @@ ON CONFLICT (id) DO NOTHING;
             if (jenis === 'pelanggaran') {
                 thead.innerHTML = `<tr class="bg-slate-950 text-xs uppercase font-black text-emerald-400 border-b-2 border-slate-800"><th class="p-3 bg-slate-950">Tanggal</th><th class="p-3 bg-slate-950">Siswa</th><th class="p-3 bg-slate-950">Kelas</th><th class="p-3 bg-slate-950">Jenis Pelanggaran</th><th class="p-3 bg-slate-950">Poin</th><th class="p-3 bg-slate-950">Tindakan</th></tr>`;
                 const filtered = appData.pelanggaran.filter(p => {
+                    if (p.tipe === 'alumni') return false;
                     const siswa = appData.siswa.find(s => s.id === parseInt(p.siswaId));
                     if (!siswa) return false;
                     if (kelas && siswa.kelas !== kelas) return false;
@@ -2138,16 +2247,27 @@ ON CONFLICT (id) DO NOTHING;
                     return `<tr class="border-b-2 border-slate-200"><td class="p-3 font-mono whitespace-nowrap">${p.tanggal}</td><td class="p-3 font-black text-slate-950 whitespace-normal break-words">${siswa ? siswa.nama : ''}</td><td class="p-3 whitespace-nowrap">${siswa ? siswa.kelas : ''}</td><td class="p-3 whitespace-normal break-words">${p.nama || ''}</td><td class="p-3 font-black text-amber-800 whitespace-nowrap">${p.poin || 0}</td><td class="p-3 whitespace-normal break-words">${p.tindakan}</td></tr>`;
                 }).join('') : `<tr><td colspan="6" class="p-4 text-center text-slate-600 font-black">Tidak ada data untuk laporan ini.</td></tr>`;
             } else if (jenis === 'prestasi') {
-                thead.innerHTML = `<tr class="bg-slate-950 text-xs uppercase font-black text-emerald-400 border-b-2 border-slate-800"><th class="p-3 bg-slate-950">Tanggal</th><th class="p-3 bg-slate-950">Siswa</th><th class="p-3 bg-slate-950">Kelas</th><th class="p-3 bg-slate-950">Nama Prestasi</th><th class="p-3 bg-slate-950">Tingkat</th><th class="p-3 bg-slate-950">Juara</th></tr>`;
+                thead.innerHTML = `<tr class="bg-slate-950 text-xs uppercase font-black text-emerald-400 border-b-2 border-slate-800"><th class="p-3 bg-slate-950">Tanggal</th><th class="p-3 bg-slate-950">Subjek</th><th class="p-3 bg-slate-950">Keterangan</th><th class="p-3 bg-slate-950">Nama Prestasi</th><th class="p-3 bg-slate-950">Tingkat</th><th class="p-3 bg-slate-950">Juara</th></tr>`;
                 const filtered = appData.prestasi.filter(p => {
+                    if (p.tipe === 'alumni') return true;
                     const siswa = appData.siswa.find(s => s.id === parseInt(p.siswaId));
                     if (!siswa) return false;
                     if (kelas && siswa.kelas !== kelas) return false;
                     return true;
                 });
                 tbody.innerHTML = filtered.length ? filtered.map(p => {
-                    const siswa = appData.siswa.find(s => s.id === parseInt(p.siswaId));
-                    return `<tr class="border-b-2 border-slate-200"><td class="p-3 font-mono whitespace-nowrap">${p.tanggal}</td><td class="p-3 font-black text-slate-950 whitespace-normal break-words">${siswa ? siswa.nama : ''}</td><td class="p-3 whitespace-nowrap">${siswa ? siswa.kelas : ''}</td><td class="p-3 font-black whitespace-normal break-words">${p.nama}</td><td class="p-3 whitespace-nowrap">${p.tingkat}</td><td class="p-3 font-black text-emerald-800 whitespace-nowrap">${p.juara}</td></tr>`;
+                    let subjekNama = '';
+                    let subjekKet = '';
+                    if (p.tipe === 'alumni') {
+                        const alumni = (appData.alumni || []).find(a => a.id === parseInt(p.siswaId));
+                        subjekNama = alumni ? alumni.nama : 'Alumni';
+                        subjekKet = `Alumni (${alumni ? alumni.tahun : ''})`;
+                    } else {
+                        const siswa = appData.siswa.find(s => s.id === parseInt(p.siswaId));
+                        subjekNama = siswa ? siswa.nama : 'Siswa';
+                        subjekKet = siswa ? siswa.kelas : '';
+                    }
+                    return `<tr class="border-b-2 border-slate-200"><td class="p-3 font-mono whitespace-nowrap">${p.tanggal}</td><td class="p-3 font-black text-slate-950 whitespace-normal break-words">${subjekNama}</td><td class="p-3 whitespace-nowrap">${subjekKet}</td><td class="p-3 font-black whitespace-normal break-words">${p.nama}</td><td class="p-3 whitespace-nowrap">${p.tingkat}</td><td class="p-3 font-black text-emerald-800 whitespace-nowrap">${p.juara}</td></tr>`;
                 }).join('') : `<tr><td colspan="6" class="p-4 text-center text-slate-600 font-black">Tidak ada data untuk laporan ini.</td></tr>`;
             }
             showNotification('Laporan berhasil diperbarui.', 'success');
