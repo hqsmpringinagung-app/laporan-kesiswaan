@@ -67,6 +67,9 @@
                 <a href="#siswa" onclick="switchTab('siswa')" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl font-black text-xs transition-all text-slate-800 hover:bg-emerald-100 hover:text-emerald-900">
                     <i class="fa-solid fa-users w-5 text-sm"></i><span>Data Siswa</span>
                 </a>
+                <a href="#alumni" onclick="switchTab('alumni')" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl font-black text-xs transition-all text-slate-800 hover:bg-emerald-100 hover:text-emerald-900">
+                    <i class="fa-solid fa-user-graduate w-5 text-sm"></i><span>Data Alumni</span>
+                </a>
                 <a href="#kelas" onclick="switchTab('kelas')" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-xl font-black text-xs transition-all text-slate-800 hover:bg-emerald-100 hover:text-emerald-900">
                     <i class="fa-solid fa-school w-5 text-sm"></i><span>Data Kelas</span>
                 </a>
@@ -129,47 +132,47 @@
 
                 <div id="tab-dashboard" class="tab-content space-y-6">
                     <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
-                        <div class="bg-emerald-950 border-2 border-emerald-800 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between">
+                        <div onclick="switchTab('siswa')" class="bg-emerald-950 border-2 border-emerald-800 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between cursor-pointer hover:bg-emerald-900 transition-all transform hover:scale-[1.02]">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-tight text-emerald-300 truncate">Total Siswa</span>
                                 <div class="w-7 h-7 bg-emerald-800 text-white border border-emerald-600 rounded-xl flex items-center justify-center text-[10px] font-black"><i class="fa-solid fa-users"></i></div>
                             </div>
                             <h3 id="stat-total-siswa" class="text-lg sm:text-2xl font-black text-white">0</h3>
                         </div>
-                        <div class="bg-amber-900 border-2 border-amber-700 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between">
+                        <div onclick="switchTab('pelanggaran')" class="bg-amber-900 border-2 border-amber-700 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between cursor-pointer hover:bg-amber-800 transition-all transform hover:scale-[1.02]">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-tight text-amber-200 truncate">Pelanggaran</span>
                                 <div class="w-7 h-7 bg-amber-700 text-white border border-amber-500 rounded-xl flex items-center justify-center text-[10px] font-black"><i class="fa-solid fa-triangle-exclamation"></i></div>
                             </div>
                             <h3 id="stat-total-pelanggaran" class="text-lg sm:text-2xl font-black text-white">0</h3>
                         </div>
-                        <div class="bg-emerald-700 border-2 border-emerald-500 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between">
+                        <div onclick="switchTab('prestasi')" class="bg-emerald-700 border-2 border-emerald-500 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between cursor-pointer hover:bg-emerald-600 transition-all transform hover:scale-[1.02]">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-tight text-emerald-100 truncate">Prestasi</span>
                                 <div class="w-7 h-7 bg-emerald-600 text-white border border-emerald-400 rounded-xl flex items-center justify-center text-[10px] font-black"><i class="fa-solid fa-trophy"></i></div>
                             </div>
                             <h3 id="stat-total-prestasi" class="text-lg sm:text-2xl font-black text-white">0</h3>
                         </div>
-                        <div class="bg-red-900 border-2 border-red-700 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between">
+                        <div onclick="switchTab('pembinaan')" class="bg-red-900 border-2 border-red-700 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between cursor-pointer hover:bg-red-800 transition-all transform hover:scale-[1.02]">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-tight text-red-200 truncate">Pembinaan</span>
                                 <div class="w-7 h-7 bg-red-700 text-white border border-red-500 rounded-xl flex items-center justify-center text-[10px] font-black"><i class="fa-solid fa-handshake-angle"></i></div>
                             </div>
                             <h3 id="stat-total-binaan" class="text-lg sm:text-2xl font-black text-white">0</h3>
                         </div>
-                        <div class="bg-purple-900 border-2 border-purple-700 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between">
+                        <div onclick="switchTab('kegiatan')" class="bg-purple-900 border-2 border-purple-700 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between cursor-pointer hover:bg-purple-800 transition-all transform hover:scale-[1.02]">
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-tight text-purple-200 truncate">Kegiatan</span>
                                 <div class="w-7 h-7 bg-purple-700 text-white border border-purple-500 rounded-xl flex items-center justify-center text-[10px] font-black"><i class="fa-solid fa-calendar-days"></i></div>
                             </div>
                             <h3 id="stat-total-kegiatan" class="text-lg sm:text-2xl font-black text-white">0</h3>
                         </div>
-                        <div class="bg-teal-900 border-2 border-teal-700 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between">
+                        <div onclick="switchTab('alumni')" class="bg-blue-950 border-2 border-blue-800 p-3 sm:p-4 rounded-2xl shadow-md text-white flex flex-col justify-between cursor-pointer hover:bg-blue-900 transition-all transform hover:scale-[1.02]">
                             <div class="flex items-center justify-between mb-1">
-                                <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-tight text-teal-200 truncate">Perizinan</span>
-                                <div class="w-7 h-7 bg-teal-700 text-white border border-teal-500 rounded-xl flex items-center justify-center text-[10px] font-black"><i class="fa-solid fa-right-from-bracket"></i></div>
+                                <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-tight text-blue-300 truncate">Total Alumni</span>
+                                <div class="w-7 h-7 bg-blue-800 text-white border border-blue-600 rounded-xl flex items-center justify-center text-[10px] font-black"><i class="fa-solid fa-user-graduate"></i></div>
                             </div>
-                            <h3 id="stat-total-perizinan" class="text-lg sm:text-2xl font-black text-white">0</h3>
+                            <h3 id="stat-total-alumni" class="text-lg sm:text-2xl font-black text-white">0</h3>
                         </div>
                     </div>
 
@@ -185,6 +188,10 @@
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="bg-white border-2 border-slate-300 p-5 sm:p-6 rounded-2xl shadow-md">
+                            <h3 class="text-sm font-black text-slate-950 mb-4 flex items-center"><i class="fa-solid fa-map-location-dot mr-2 text-emerald-700"></i>Statistik Asal Kota Siswa</h3>
+                            <div class="h-64"><canvas id="originCityChart"></canvas></div>
+                        </div>
                         <div class="bg-white border-2 border-slate-300 p-5 sm:p-6 rounded-2xl shadow-md space-y-4">
                             <h3 class="text-sm font-black text-amber-800 flex items-center"><i class="fa-solid fa-triangle-exclamation mr-2"></i>Perlu Perhatian (Poin Tinggi)</h3>
                             <div id="dashboard-high-risk-list" class="space-y-3"></div>
@@ -192,10 +199,6 @@
                         <div class="bg-white border-2 border-slate-300 p-5 sm:p-6 rounded-2xl shadow-md space-y-4">
                             <h3 class="text-sm font-black text-emerald-800 flex items-center"><i class="fa-solid fa-trophy mr-2"></i>Prestasi Terbaru</h3>
                             <div id="dashboard-recent-prestasi" class="space-y-3"></div>
-                        </div>
-                        <div class="bg-white border-2 border-slate-300 p-5 sm:p-6 rounded-2xl shadow-md space-y-4">
-                            <h3 class="text-sm font-black text-purple-800 flex items-center"><i class="fa-solid fa-calendar-check mr-2"></i>Kegiatan Terdekat</h3>
-                            <div id="dashboard-recent-kegiatan" class="space-y-3"></div>
                         </div>
                     </div>
                 </div>
@@ -234,6 +237,44 @@
                                     </tr>
                                 </thead>
                                 <tbody id="siswa-table-body" class="divide-y-2 divide-slate-200 text-xs font-black text-slate-900"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-alumni" class="tab-content hidden space-y-6">
+                    <div class="bg-white border-2 border-slate-300 rounded-2xl p-5 sm:p-6 shadow-md flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                            <div class="w-full sm:w-64">
+                                <input type="text" id="alumni-search" oninput="renderAlumniTable()" placeholder="Cari nama / tahun lulus..." class="w-full px-4 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-600">
+                            </div>
+                            <select id="alumni-filter-tahun" onchange="renderAlumniTable()" class="w-full sm:w-auto px-4 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900">
+                                <option value="">Semua Tahun Lulus</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                            <button onclick="downloadPDF('Data Alumni Sekolah', 'alumni-table-body', ['Foto', 'Nama Alumni', 'Tahun Lulus', 'Melanjutkan Ke', 'No. HP / Kontak', 'Pekerjaan Saat Ini'])" class="px-4 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-900 font-black rounded-xl text-xs border-2 border-slate-400 flex items-center justify-center space-x-1.5"><i class="fa-solid fa-download text-emerald-700"></i><span>Download Data Alumni (PDF)</span></button>
+                            <button onclick="openAlumniModal()" class="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white font-black rounded-xl text-xs shadow-md transition-all flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-user-graduate"></i><span>Tambah Data Alumni</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border-2 border-slate-300 rounded-2xl shadow-md overflow-hidden">
+                        <div class="overflow-x-auto max-h-[650px]">
+                            <table class="w-full text-left border-collapse min-w-[900px]">
+                                <thead class="sticky-header bg-slate-950 text-[11px] uppercase font-black text-emerald-400 border-b-2 border-slate-800 tracking-wider">
+                                    <tr>
+                                        <th class="p-4 bg-slate-950 text-center w-16">Foto</th>
+                                        <th class="p-4 bg-slate-950">Nama Alumni</th>
+                                        <th class="p-4 bg-slate-950">Tahun Lulus</th>
+                                        <th class="p-4 bg-slate-950">Melanjutkan Ke / Sekolah Lanjutan</th>
+                                        <th class="p-4 bg-slate-950">Kontak / No. HP</th>
+                                        <th class="p-4 bg-slate-950">Pekerjaan / Aktivitas</th>
+                                        <th class="p-4 bg-slate-950 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="alumni-table-body" class="divide-y-2 divide-slate-200 text-xs font-black text-slate-900"></tbody>
                             </table>
                         </div>
                     </div>
@@ -654,12 +695,60 @@ ON CONFLICT (id) DO NOTHING;
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-black text-slate-900 mb-1">Alamat Lengkap</label>
-                    <textarea id="siswa-alamat" rows="2" class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900"></textarea>
+                    <label class="block text-xs font-black text-slate-900 mb-1">Alamat / Asal Kota (Contoh: Kediri, Surabaya, dll)</label>
+                    <textarea id="siswa-alamat" rows="2" placeholder="Contoh: Jl. Hayam Wuruk No. 12, Kediri" class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900"></textarea>
                 </div>
                 <div class="flex justify-end space-x-3 pt-4 border-t-2 border-slate-300">
                     <button type="button" onclick="closeModal('modal-siswa')" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-900 font-black rounded-xl text-xs border-2 border-slate-400">Batal</button>
                     <button type="submit" class="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white font-black rounded-xl text-xs shadow">Simpan Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: TAMBAH / EDIT ALUMNI -->
+    <div id="modal-alumni" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4 overflow-y-auto">
+        <div class="bg-white border-2 border-slate-400 rounded-3xl max-w-2xl w-full p-5 sm:p-8 shadow-2xl my-8">
+            <div class="flex justify-between items-center mb-6 border-b-2 border-slate-300 pb-4">
+                <h3 id="modal-alumni-title" class="text-base sm:text-lg font-black text-slate-950">Tambah Data Alumni</h3>
+                <button onclick="closeModal('modal-alumni')" class="p-2 text-slate-600 hover:text-slate-950 rounded-xl"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="form-alumni" onsubmit="saveAlumni(event)" class="space-y-4">
+                <input type="hidden" id="alumni-id">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-black text-slate-900 mb-1">Nama Lengkap Alumni</label>
+                        <input type="text" id="alumni-nama" required class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black text-slate-900 mb-1">Tahun Lulus</label>
+                        <input type="text" id="alumni-tahun" required placeholder="Contoh: 2024" class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black text-slate-900 mb-1">Melanjutkan Ke / Sekolah Lanjutan</label>
+                        <input type="text" id="alumni-sekolah" required placeholder="Contoh: SMAN 1 / MAN 1" class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black text-slate-900 mb-1">Nomor HP / Kontak Alumni</label>
+                        <input type="text" id="alumni-hp" required placeholder="Contoh: 081234567890" class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black text-slate-900 mb-1">Pekerjaan / Aktivitas Saat Ini</label>
+                        <input type="text" id="alumni-pekerjaan" placeholder="Contoh: Mahasiswa / Wirausaha" class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-black text-slate-900 mb-1">Upload Foto Alumni (JPG/PNG)</label>
+                        <input type="file" id="alumni-foto-file" accept="image/jpeg, image/png" onchange="handleAlumniFotoUpload(event)" class="w-full px-3 py-2 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900 file:mr-4 file:py-1 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-black file:bg-emerald-600 file:text-white hover:file:bg-emerald-700">
+                        <input type="hidden" id="alumni-foto">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-black text-slate-900 mb-1">Alamat Domisili Saat Ini</label>
+                    <textarea id="alumni-alamat" rows="2" class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900"></textarea>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4 border-t-2 border-slate-300">
+                    <button type="button" onclick="closeModal('modal-alumni')" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-900 font-black rounded-xl text-xs border-2 border-slate-400">Batal</button>
+                    <button type="submit" class="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white font-black rounded-xl text-xs shadow">Simpan Alumni</button>
                 </div>
             </form>
         </div>
@@ -767,11 +856,10 @@ ON CONFLICT (id) DO NOTHING;
                         <label class="block text-xs font-black text-slate-900 mb-1">Tingkat</label>
                         <select id="prestasi-tingkat" class="w-full px-3 py-2.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-xs font-black text-slate-900">
                             <option value="Sekolah">Sekolah / Madrasah</option>
-                            <option value="Sekolah">Kecamatan</option>
+                            <option value="Kecamatan">Kecamatan</option>
                             <option value="Kabupaten/Kota">Kabupaten / Kota</option>
                             <option value="Provinsi">Provinsi</option>
                             <option value="Nasional">Nasional</option>
-                            <option value="Sekolah">Diselenggarakan Sekolah / Madrasah</option>
                         </select>
                     </div>
                     <div>
@@ -1030,10 +1118,14 @@ ON CONFLICT (id) DO NOTHING;
                             <p style="margin-bottom: 6px;">2. <strong>Pelanggaran Sedang (15-30 Poin):</strong> Tidak mengikuti kegiatan berjamaah wajib, membolos jam pelajaran, membawa gadget tanpa izin resmi.</p>
                             <p style="margin-bottom: 6px;">3. <strong>Pelanggaran Berat (50-100 Poin):</strong> Merokok / membawa barang terlarang, terlibat perkelahian / bullying, atau tindak amoral berat.</p>`,
             siswa: [
-                { id: 1, nis: "232409001", nama: "Utsman bin Affan", kelas: "IX A", jk: "L", ttl: "Kediri, 17 Agustus 2011", ortu: "Mustofa", hp: "082112233445", alamat: "Jl. Hayam Wuruk No. 12", foto: "https://placehold.co/150x150/10b981/ffffff?text=UB" },
+                { id: 1, nis: "232409001", nama: "Utsman bin Affan", kelas: "IX A", jk: "L", ttl: "Kediri, 17 Agustus 2011", ortu: "Mustofa", hp: "082112233445", alamat: "Jl. Hayam Wuruk No. 12, Kediri", foto: "https://placehold.co/150x150/10b981/ffffff?text=UB" },
                 { id: 2, nis: "232409002", nama: "Zainab binti Muhammad", kelas: "IX A", jk: "P", ttl: "Madiun, 12 Desember 2011", ortu: "Kasim", hp: "082223344556", alamat: "Jl. Pahlawan No. 90, Madiun", foto: "https://placehold.co/150x150/10b981/ffffff?text=ZB" },
                 { id: 3, nis: "232408001", nama: "Rizky Ramadhan Putra", kelas: "VIII A", jk: "L", ttl: "Surabaya, 10 Ramadan 2012", ortu: "Herman Susanto", hp: "081678901234", alamat: "Jl. Kenangan No. 5, Surabaya", foto: "https://placehold.co/150x150/10b981/ffffff?text=RR" },
-                { id: 4, nis: "232407001", nama: "Ahmad Fauzan Al-Ghifari", kelas: "VII A", jk: "L", ttl: "Malang, 12 Januari 2013", ortu: "H. Abdullah", hp: "081234567890", alamat: "Jl. Pesantren No. 1, Ringinagung", foto: "https://placehold.co/150x150/10b981/ffffff?text=AF" }
+                { id: 4, nis: "232407001", nama: "Ahmad Fauzan Al-Ghifari", kelas: "VII A", jk: "L", ttl: "Malang, 12 Januari 2013", ortu: "H. Abdullah", hp: "081234567890", alamat: "Jl. Pesantren No. 1, Malang", foto: "https://placehold.co/150x150/10b981/ffffff?text=AF" }
+            ],
+            alumni: [
+                { id: 1, nama: "Aisyah Humairah", tahun: "2024", sekolah: "SMAN 1 Kediri", hp: "081122334455", pekerjaan: "Pelajar / Mahasiswa", alamat: "Jl. Melati No. 4, Kediri", foto: "https://placehold.co/150x150/10b981/ffffff?text=AH" },
+                { id: 2, nama: "Zubair bin Awwam", tahun: "2023", sekolah: "MAN 2 Kediri", hp: "082233445566", pekerjaan: "Wirausaha", alamat: "Jl. Mawar No. 10, Madiun", foto: "https://placehold.co/150x150/10b981/ffffff?text=ZA" }
             ],
             pelanggaran: [
                 { id: 1, siswaId: 3, tanggal: "2026-02-10", nama: "Terlambat Hadir di Sekolah", kategori: "Ringan", poin: 5, kronologi: "Terlambat datang apel pagi", pelapor: "Guru Piket", tindakan: "Teguran lisan & nasehat", hasilTindakan: "Sudah membuat surat pernyataan", status: "Selesai" }
@@ -1060,6 +1152,7 @@ ON CONFLICT (id) DO NOTHING;
         function validateAppData() {
             if (!Array.isArray(appData.kelas)) appData.kelas = ["IX A", "IX B", "VIII A", "VIII B", "VII A", "VII B"];
             if (!Array.isArray(appData.siswa)) appData.siswa = [];
+            if (!Array.isArray(appData.alumni)) appData.alumni = [];
             if (!Array.isArray(appData.pelanggaran)) appData.pelanggaran = [];
             if (!Array.isArray(appData.prestasi)) appData.prestasi = [];
             if (!Array.isArray(appData.pembinaan)) appData.pembinaan = [];
@@ -1121,6 +1214,7 @@ ON CONFLICT (id) DO NOTHING;
                             populateDropdowns();
                             renderDashboard();
                             renderSiswaTable();
+                            renderAlumniTable();
                             renderPelanggaranTable();
                             renderPrestasiTable();
                             renderPembinaanTable();
@@ -1139,6 +1233,7 @@ ON CONFLICT (id) DO NOTHING;
         async function resetAllData() {
             if (confirm('PERINGATAN: Apakah Anda yakin ingin menghapus SELURUH data aplikasi di Supabase & LocalStorage, lalu mengembalikannya ke kondisi kosong (mulai dari nol)? Tindakan ini tidak dapat dibatalkan.')) {
                 appData.siswa = [];
+                appData.alumni = [];
                 appData.pelanggaran = [];
                 appData.prestasi = [];
                 appData.pembinaan = [];
@@ -1166,12 +1261,14 @@ ON CONFLICT (id) DO NOTHING;
 
         let dashboardChartInstance = null;
         let classChartInstance = null;
+        let originCityChartInstance = null;
 
         function initApp() {
             validateAppData();
             populateDropdowns();
             renderDashboard();
             renderSiswaTable();
+            renderAlumniTable();
             renderPelanggaranTable();
             renderPrestasiTable();
             renderPembinaanTable();
@@ -1199,6 +1296,7 @@ ON CONFLICT (id) DO NOTHING;
             const titles = {
                 dashboard: 'Dashboard Waka Kesiswaan',
                 siswa: 'Pengelolaan Data Siswa',
+                alumni: 'Pengelolaan Data Alumni',
                 kelas: 'Ruang Master Data Kelas',
                 guru: 'Ruang Master Data Guru / Pelapor',
                 pelanggaran: 'Catatan Pelanggaran & Poin Siswa',
@@ -1254,6 +1352,18 @@ ON CONFLICT (id) DO NOTHING;
             }
         }
 
+        function handleAlumniFotoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('alumni-foto').value = e.target.result;
+                    showNotification('Foto alumni (JPG) berhasil dimuat.', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
         function populateDropdowns() {
             validateAppData();
             const sortedKelas = [...appData.kelas].sort((a,b) => b.localeCompare(a));
@@ -1263,6 +1373,10 @@ ON CONFLICT (id) DO NOTHING;
             if(document.getElementById('siswa-kelas')) document.getElementById('siswa-kelas').innerHTML = kelasOpts;
             if(document.getElementById('siswa-filter-kelas')) document.getElementById('siswa-filter-kelas').innerHTML = filterKelasOpts;
             if(document.getElementById('laporan-kelas')) document.getElementById('laporan-kelas').innerHTML = filterKelasOpts;
+
+            const uniqueYears = [...new Set(appData.alumni.map(a => a.tahun))].sort().reverse();
+            const filterTahunOpts = `<option value="">Semua Tahun Lulus</option>` + uniqueYears.map(y => `<option value="${y}">${y}</option>`).join('');
+            if(document.getElementById('alumni-filter-tahun')) document.getElementById('alumni-filter-tahun').innerHTML = filterTahunOpts;
 
             const siswaOpts = `<option value="">Pilih Siswa</option>` + appData.siswa.map(s => `<option value="${s.id}">${s.nama} (${s.kelas} - ${s.nis})</option>`).join('');
             if(document.getElementById('pelanggaran-siswa-id')) document.getElementById('pelanggaran-siswa-id').innerHTML = siswaOpts;
@@ -1286,11 +1400,11 @@ ON CONFLICT (id) DO NOTHING;
 
         function renderDashboard() {
             if (document.getElementById('stat-total-siswa')) document.getElementById('stat-total-siswa').innerText = appData.siswa.length;
+            if (document.getElementById('stat-total-alumni')) document.getElementById('stat-total-alumni').innerText = appData.alumni.length;
             if (document.getElementById('stat-total-pelanggaran')) document.getElementById('stat-total-pelanggaran').innerText = appData.pelanggaran.length;
             if (document.getElementById('stat-total-prestasi')) document.getElementById('stat-total-prestasi').innerText = appData.prestasi.length;
             if (document.getElementById('stat-total-binaan')) document.getElementById('stat-total-binaan').innerText = appData.pembinaan.filter(p => p.status === 'Proses').length;
             if (document.getElementById('stat-total-kegiatan')) document.getElementById('stat-total-kegiatan').innerText = appData.kegiatan.length;
-            if (document.getElementById('stat-total-perizinan')) document.getElementById('stat-total-perizinan').innerText = appData.perizinan.length;
 
             if (appData.tataTertibDoc && document.getElementById('tata-tertib-editor')) {
                 document.getElementById('tata-tertib-editor').innerHTML = appData.tataTertibDoc;
@@ -1329,19 +1443,6 @@ ON CONFLICT (id) DO NOTHING;
                         </div>
                     `;
                 }).join('') : '<p class="text-xs text-slate-600 font-black">Belum ada data prestasi.</p>';
-            }
-
-            const recentKegiatan = [...appData.kegiatan].sort((a,b) => new Date(a.tanggal) - new Date(b.tanggal)).slice(0, 3);
-            if (document.getElementById('dashboard-recent-kegiatan')) {
-                document.getElementById('dashboard-recent-kegiatan').innerHTML = recentKegiatan.length ? recentKegiatan.map(k => `
-                    <div class="p-3 bg-slate-50 border-2 border-slate-300 rounded-xl">
-                        <div class="flex justify-between items-start">
-                            <h4 class="text-xs font-black text-slate-950 truncate pr-2">${k.nama}</h4>
-                            <span class="text-[10px] bg-purple-200 border-2 border-purple-400 text-purple-950 px-2 py-0.5 rounded font-black flex-shrink-0">${k.status}</span>
-                        </div>
-                        <p class="text-[10px] font-black text-slate-700 mt-1"><i class="fa-solid fa-calendar mr-1"></i>${k.tanggal} | ${k.tempat}</p>
-                    </div>
-                `).join('') : '<p class="text-xs text-slate-600 font-black">Belum ada kegiatan terdekat.</p>';
             }
 
             renderCharts();
@@ -1396,6 +1497,40 @@ ON CONFLICT (id) DO NOTHING;
                     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
                 });
             }
+
+            const ctxCityEl = document.getElementById('originCityChart');
+            if (ctxCityEl) {
+                const cityCounts = {};
+                appData.siswa.forEach(s => {
+                    let city = 'Lainnya';
+                    const addr = (s.alamat || '').trim();
+                    if (addr) {
+                        // Extract last word or comma separated city name
+                        const parts = addr.split(',');
+                        let rawCity = parts.length > 1 ? parts[parts.length - 1].trim() : parts[0];
+                        // Capitalize nicely
+                        city = rawCity.charAt(0).toUpperCase() + rawCity.slice(1).toLowerCase();
+                    }
+                    cityCounts[city] = (cityCounts[city] || 0) + 1;
+                });
+
+                const cityLabels = Object.keys(cityCounts);
+                const cityDataValues = Object.values(cityCounts);
+
+                const ctxCity = ctxCityEl.getContext('2d');
+                if (originCityChartInstance) originCityChartInstance.destroy();
+                originCityChartInstance = new Chart(ctxCity, {
+                    type: 'doughnut',
+                    data: {
+                        labels: cityLabels.length ? cityLabels : ['Belum Ada Data'],
+                        datasets: [{
+                            data: cityDataValues.length ? cityDataValues : [1],
+                            backgroundColor: ['#047857', '#d97706', '#2563eb', '#9333ea', '#dc2626', '#64748b', '#0d9488', '#ea580c']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { weight: 'bold', size: 10 } } } } }
+                });
+            }
         }
 
         function renderSiswaTable() {
@@ -1405,7 +1540,9 @@ ON CONFLICT (id) DO NOTHING;
             const filterKelas = filterKelasInput ? filterKelasInput.value : '';
 
             const filtered = appData.siswa.filter(s => {
-                const matchSearch = s.nama.toLowerCase().includes(search) || s.nis.toLowerCase().includes(search);
+                const matchSearch = s.nama.toLowerCase().includes(search) || 
+                                    s.nis.toLowerCase().includes(search) || 
+                                    (s.alamat && s.alamat.toLowerCase().includes(search));
                 const matchKelas = filterKelas ? s.kelas === filterKelas : true;
                 return matchSearch && matchKelas;
             });
@@ -1433,6 +1570,39 @@ ON CONFLICT (id) DO NOTHING;
             `).join('') : `<tr><td colspan="8" class="p-6 text-center text-slate-600 font-black">Tidak ada data siswa ditemukan.</td></tr>`;
         }
 
+        function renderAlumniTable() {
+            const searchInput = document.getElementById('alumni-search');
+            const filterTahunInput = document.getElementById('alumni-filter-tahun');
+            const search = searchInput ? searchInput.value.toLowerCase() : '';
+            const filterTahun = filterTahunInput ? filterTahunInput.value : '';
+
+            const filtered = appData.alumni.filter(a => {
+                const matchSearch = a.nama.toLowerCase().includes(search) || a.tahun.toLowerCase().includes(search);
+                const matchTahun = filterTahun ? a.tahun === filterTahun : true;
+                return matchSearch && matchTahun;
+            });
+
+            const tbody = document.getElementById('alumni-table-body');
+            if (!tbody) return;
+
+            tbody.innerHTML = filtered.length ? filtered.map(a => `
+                <tr class="hover:bg-emerald-50 transition-colors">
+                    <td class="p-4 text-center">
+                        <img src="${a.foto}" onerror="this.src='https://placehold.co/100x100/10b981/ffffff?text=A'" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-600 shadow-sm mx-auto">
+                    </td>
+                    <td class="p-4 font-black text-slate-950 whitespace-nowrap">${a.nama}</td>
+                    <td class="p-4 whitespace-nowrap"><span class="px-2.5 py-1 bg-slate-200 border-2 border-slate-400 text-slate-900 text-xs font-black rounded-lg">${a.tahun}</span></td>
+                    <td class="p-4 text-slate-900 font-black whitespace-nowrap">${a.sekolah}</td>
+                    <td class="p-4 text-emerald-900 font-black whitespace-nowrap"><i class="fa-solid fa-phone mr-1"></i>${a.hp}</td>
+                    <td class="p-4 text-slate-900 font-black whitespace-nowrap">${a.pekerjaan || '-'}</td>
+                    <td class="p-4 text-center whitespace-nowrap space-x-1.5">
+                        <button onclick="editAlumni(${a.id})" title="Edit" class="p-2 bg-amber-100 text-amber-900 border-2 border-amber-400 hover:bg-amber-700 hover:text-white rounded-lg transition-all shadow-sm"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteAlumni(${a.id})" title="Hapus" class="p-2 bg-red-100 text-red-900 border-2 border-red-400 hover:bg-red-700 hover:text-white rounded-lg transition-all shadow-sm"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('') : `<tr><td colspan="7" class="p-6 text-center text-slate-600 font-black">Tidak ada data alumni ditemukan.</td></tr>`;
+        }
+
         function openSiswaModal(id = null) {
             document.getElementById('form-siswa').reset();
             document.getElementById('siswa-id').value = '';
@@ -1454,6 +1624,27 @@ ON CONFLICT (id) DO NOTHING;
                 }
             }
             openModal('modal-siswa');
+        }
+
+        function openAlumniModal(id = null) {
+            document.getElementById('form-alumni').reset();
+            document.getElementById('alumni-id').value = '';
+            document.getElementById('modal-alumni-title').innerText = 'Tambah Data Alumni';
+            if (id) {
+                const a = appData.alumni.find(item => item.id === parseInt(id));
+                if (a) {
+                    document.getElementById('modal-alumni-title').innerText = 'Edit Data Alumni';
+                    document.getElementById('alumni-id').value = a.id;
+                    document.getElementById('alumni-nama').value = a.nama;
+                    document.getElementById('alumni-tahun').value = a.tahun;
+                    document.getElementById('alumni-sekolah').value = a.sekolah;
+                    document.getElementById('alumni-hp').value = a.hp;
+                    document.getElementById('alumni-pekerjaan').value = a.pekerjaan || '';
+                    document.getElementById('alumni-foto').value = a.foto;
+                    document.getElementById('alumni-alamat').value = a.alamat || '';
+                }
+            }
+            openModal('modal-alumni');
         }
 
         async function saveSiswa(e) {
@@ -1488,7 +1679,37 @@ ON CONFLICT (id) DO NOTHING;
             populateDropdowns();
         }
 
+        async function saveAlumni(e) {
+            e.preventDefault();
+            const id = document.getElementById('alumni-id').value;
+            const data = {
+                id: id ? parseInt(id) : Date.now(),
+                nama: document.getElementById('alumni-nama').value,
+                tahun: document.getElementById('alumni-tahun').value,
+                sekolah: document.getElementById('alumni-sekolah').value,
+                hp: document.getElementById('alumni-hp').value,
+                pekerjaan: document.getElementById('alumni-pekerjaan').value,
+                foto: document.getElementById('alumni-foto').value || 'https://placehold.co/150x150/10b981/ffffff?text=A',
+                alamat: document.getElementById('alumni-alamat').value
+            };
+
+            if (id) {
+                const index = appData.alumni.findIndex(a => a.id === parseInt(id));
+                if (index !== -1) appData.alumni[index] = data;
+                showNotification('Data alumni berhasil diperbarui!', 'success');
+            } else {
+                appData.alumni.push(data);
+                showNotification('Data alumni baru berhasil ditambahkan!', 'success');
+            }
+
+            await saveToSupabase();
+            closeModal('modal-alumni');
+            renderAlumniTable();
+            populateDropdowns();
+        }
+
         function editSiswa(id) { openSiswaModal(id); }
+        function editAlumni(id) { openAlumniModal(id); }
 
         async function deleteSiswa(id) {
             if (confirm('Apakah Anda yakin ingin menghapus data siswa ini?')) {
@@ -1498,6 +1719,16 @@ ON CONFLICT (id) DO NOTHING;
                 renderDashboard();
                 populateDropdowns();
                 showNotification('Data siswa berhasil dihapus.', 'info');
+            }
+        }
+
+        async function deleteAlumni(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus data alumni ini?')) {
+                appData.alumni = appData.alumni.filter(a => a.id !== parseInt(id));
+                await saveToSupabase();
+                renderAlumniTable();
+                populateDropdowns();
+                showNotification('Data alumni berhasil dihapus.', 'info');
             }
         }
 
